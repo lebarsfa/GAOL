@@ -22,7 +22,7 @@ dnl
 # to configure the system for the local environment.
 # ------------------------------------------------------------------------
 
-AC_PREREQ(2.61)
+AC_PREREQ([2.71])
 
 # gaol library version information
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -334,7 +334,7 @@ possibly)
     [Define this if relation symbols should stand for \"possibly relations\"])
     ;;
 *)
-    AC_MSG_ERROR(\"$relations\": unrecognized default relation (set/possibly/certainly))
+    AC_MSG_ERROR("$relations": unrecognized default relation (set/possibly/certainly))
    ;;
 esac
 
@@ -483,7 +483,7 @@ AC_ARG_WITH([cppunit-lib],
 LDFLAGS="$LDFLAGS ${cppunit_libpath}"
 CXXFLAGS="${CXXFLAGS} ${cppunit_incpath}"
 AC_MSG_CHECKING([for cppunit/ui/text/TestRunner.h])
-AC_CHECK_HEADERS("cppunit/ui/text/TestRunner.h",have_TestRunner=yes,have_TestRunner=no)
+AC_CHECK_HEADERS(cppunit/ui/text/TestRunner.h,have_TestRunner=yes,have_TestRunner=no)
 if test "${have_TestRunner}" = no; then
   AM_CONDITIONAL([CPPUNIT_COND],[test ${have_TestRunner} = yes])
     AC_MSG_WARN("*******************************************")
@@ -545,7 +545,6 @@ fi
 
 
 # Checks for C header files
-AC_HEADER_STDC
 AC_CHECK_HEADERS([fenv.h float.h stddef.h stdlib.h string.h sys/time.h unistd.h])
 
 # Checking for C++ header files

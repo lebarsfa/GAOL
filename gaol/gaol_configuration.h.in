@@ -1,10 +1,16 @@
 /* gaol/gaol_configuration.h.in.  Generated from configure.ac by autoheader.  */
 
-/* Define this if your system is an AARCH64-based computer under Linux */
+/* Define this if your system is an aarch64-based computer under Linux */
 #undef AARCH64_LINUX
 
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
+
+/* Define this if your system is an arm-based computer under Linux */
+#undef ARM_LINUX
+
+/* Define this if your system is a macOS-based arm or compatible */
+#undef ARM_MACOSX
 
 /* Define this to 1 if function clock() is declared in time.h */
 #undef CLOCK_IN_HEADER
@@ -60,6 +66,9 @@
 /* Define to 1 if you have the `clock' function. */
 #undef HAVE_CLOCK
 
+/* Define to 1 if you have the <cppunit/ui/text/TestRunner.h> header file. */
+#undef HAVE_CPPUNIT_UI_TEXT_TESTRUNNER_H
+
 /* Define to 1 if you have the <crlibm.h> header file. */
 #undef HAVE_CRLIBM_H
 
@@ -72,6 +81,15 @@
 /* Define to 1 if you have the `fesetround' function. */
 #undef HAVE_FESETROUND
 
+/* Define this to 1 if the compiler supports the "-ffloat-store" option */
+#undef HAVE_FFLOAT_STORE_OPTION
+
+/* Define this to 1 if the compiler supports the "-ffp-contract=off" option */
+#undef HAVE_FFP_CONTRACT_OFF_OPTION
+
+/* Define this to 1 if the compiler supports the "-ffp-mode=full" option */
+#undef HAVE_FFP_MODE_FULL_OPTION
+
 /* Define to 1 if you have the `finite' function. */
 #undef HAVE_FINITE
 
@@ -80,6 +98,18 @@
 
 /* Define to 1 if you have the `floor' function. */
 #undef HAVE_FLOOR
+
+/* Define this to 1 if the compiler supports the "-fno-fast-math" option */
+#undef HAVE_FNO_FAST_MATH_OPTION
+
+/* Define this to 1 if the compiler supports the "-fp-model=strict" option */
+#undef HAVE_FP_MODEL_STRICT_OPTION
+
+/* Define this to 1 if the compiler supports the "-fp:strict" option */
+#undef HAVE_FP_STRICT_OPTION
+
+/* Define this to 1 if the compiler supports the "-frounding-math" option */
+#undef HAVE_FROUNDING_MATH_OPTION
 
 /* Define to 1 if you have the `getrusage' function. */
 #undef HAVE_GETRUSAGE
@@ -100,11 +130,11 @@
 /* Define to 1 if you have the <MathLib.h> header file. */
 #undef HAVE_MATHLIB_H
 
-/* Define to 1 if you have the <memory.h> header file. */
-#undef HAVE_MEMORY_H
-
 /* Define to 1 if you have the `memset' function. */
 #undef HAVE_MEMSET
+
+/* Define this to 1 if the compiler supports the "-mpc64" option */
+#undef HAVE_MPC64_OPTION
 
 /* Define to 1 if you have the `nextafter' function. */
 #undef HAVE_NEXTAFTER
@@ -122,9 +152,6 @@
 /* Define to 1 if you have the `round' function. */
 #undef HAVE_ROUND
 
-/* Define this to 1 if the compiler supports the "-frounding-math" option */
-#undef HAVE_ROUNDING_MATH_OPTION
-
 /* Define to 1 if you have the `sqrt' function. */
 #undef HAVE_SQRT
 
@@ -137,8 +164,14 @@
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 
+/* Define to 1 if you have the <stdio.h> header file. */
+#undef HAVE_STDIO_H
+
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
+
+/* Define this to 1 if the compiler supports the "-std=c++11" option */
+#undef HAVE_STD_CPP11_OPTION
 
 /* Define to 1 if you have the <strings.h> header file. */
 #undef HAVE_STRINGS_H
@@ -179,11 +212,13 @@
 /* Define this if your system is a Linux-based ix86 or compatible */
 #undef IX86_LINUX
 
-/* Define this if your system is a Linux-based ix86 or compatible */
+/* Define this if your system is a macOS-based ix86 or compatible */
 #undef IX86_MACOSX
 
-/* Define to the sub-directory in which libtool stores uninstalled libraries.
-   */
+/* Define this if your system is a mingw-based ix86 or compatible */
+#undef IX86_MINGW
+
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
 #undef LT_OBJDIR
 
 /* Name of package */
@@ -222,7 +257,9 @@
 /* Define this if your system is a SUN Sparc computer under Solaris */
 #undef SPARC_SOLARIS
 
-/* Define to 1 if you have the ANSI C header files. */
+/* Define to 1 if all of the C90 standard headers exist (not just the ones
+   required in a freestanding environment). This macro is provided for
+   backward compatibility; new code need not use it. */
 #undef STDC_HEADERS
 
 /* Define this to 1 if SSE2 instructions are to be used */

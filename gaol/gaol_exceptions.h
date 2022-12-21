@@ -68,7 +68,11 @@ namespace gaol {
     */
     gaol_exception(const char* f, unsigned l, const string& e);
 
-    ~gaol_exception() {}
+	#if __cplusplus >= 201103L
+    ~gaol_exception() noexcept {}
+	#else
+    ~gaol_exception() throw() {}
+	#endif
     /*!
       \brief Accessor for the file name
 

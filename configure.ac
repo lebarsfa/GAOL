@@ -94,7 +94,7 @@ AC_SUBST(GAOL_RPM_RELEASE)
 AC_PROG_YACC
 
 CFLAGS="${CFLAGS} -I.."
-CXXFLAGS="${CXXFLAGS} -std=c++11 -I.."
+CXXFLAGS="${CXXFLAGS} -I.."
 
 AC_PROG_CC([gcc])
 AC_PROG_CXX
@@ -483,6 +483,24 @@ AC_C_BIGENDIAN
 AC_CHECK_SIZEOF(int, 4)
 AC_CHECK_SIZEOF(long, 4)
 AC_CHECK_SIZEOF(long long int,8)
+
+
+# Checking for availability of -std=c++11
+AC_LANG([C++])
+if test "$CXX" = "g++"; then
+    OLD_CXXFLAGS=$CXXFLAGS
+    CXXFLAGS="-std=c++11"
+    AC_MSG_CHECKING(whether the C++ compiler accepts -std=c++11)
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[has_std_cpp11_opt=yes],[has_std_cpp11_opt=no])
+    AC_MSG_RESULT(${has_std_cpp11_opt})
+    CXXFLAGS=${OLD_CXXFLAGS}
+    AC_LANG([C])
+    if test "${has_std_cpp11_opt}" = yes; then
+        CXXFLAGS="${CXXFLAGS} -std=c++11"
+        AC_DEFINE(HAVE_STD_CPP11_OPTION,1,
+            [Define this to 1 if the compiler supports the "-std=c++11" option])
+    fi
+fi
 
 
 # Checking for availability of -frounding-math

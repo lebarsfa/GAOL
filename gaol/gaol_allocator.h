@@ -30,11 +30,8 @@
 #ifndef __gaol_allocator_h__
 #define __gaol_allocator_h__
 
-#include <limits>
 #include <new>
-#undef _XOPEN_SOURCE
-#define _XOPEN_SOURCE 600
-#include <stdlib.h>
+#include "gaol/gaol_port.h" // Needed for MEMALIGN()...
 
 namespace gaol {
 
@@ -117,7 +114,7 @@ class aligned_allocator
 		void deallocate ( pointer p, size_type num )
 		{
 			// print message and deallocate memory with global delete
-			free((void*)p);
+			FREEALIGN((void*)p);
 		}
 };
 

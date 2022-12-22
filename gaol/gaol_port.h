@@ -44,27 +44,56 @@
 // Alignment on an 'nbytes' bytes boundary
 #if defined(_MSC_VER)
 #	define GAOL_ALIGN(what,nbytes)	__declspec(align(nbytes)) what
+//#elif (__cplusplus >= 201103L)
+// Gives warnings with some versions of gcc...
+//#	define GAOL_ALIGN(what,nbytes)	alignas(nbytes) what
 #else
 #	define GAOL_ALIGN(what,nbytes) what __attribute__((aligned(nbytes)))
-#endif // defined(MSC_VER)
+#endif
 #define GAOL_ALIGN16(what) GAOL_ALIGN(what,16)
 
 // Allocation of 'size' bytes on 'boundary' bytes.
 // NOTE: MEMALIGN() must return null value if no allocation error
-#if defined (__MINGW32__)
+#if defined (_MSC_VER)
+// See https://learn.microsoft.com/en-us/cpp/overview/visual-cpp-language-conformance
+#  include <malloc.h>
+#  define MEMALIGN(buf,boundary,size) (!(buf=_aligned_malloc(size,boundary)))
+#  define FREEALIGN(buf) _aligned_free(buf)
+#elif defined (__MINGW32__)
 #  include <stdlib.h>
 #  include <malloc.h>
-#  define MEMALIGN(buf,boundary,size) (!(buf=_mm_malloc(size,boundary)))
-#elif defined(IX86_LINUX) || defined(AARCH64_LINUX) || defined(ARM_LINUX) || defined(__linux__)
-#  undef _XOPEN_SOURCE
-#  define _XOPEN_SOURCE 600
+//#  define MEMALIGN(buf,boundary,size) (!(buf=_mm_malloc(size,boundary)))
+//#  define FREEALIGN(buf) _mm_free(buf)
+// Seems to work better than the others when SSE2 enabled...
+#  define MEMALIGN(buf,boundary,size) (!(buf=malloc(size)))
+#  define FREEALIGN(buf) free(buf)
+#elif (__cplusplus >= 201703L)
+#  include <cstdlib>
+#  define MEMALIGN(buf,boundary,size) (!(buf=std::aligned_alloc(boundary,size)))
+#  define FREEALIGN(buf) std::free(buf)
+#elif defined (__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
+#  include <stdlib.h>
+#  define MEMALIGN(buf,boundary,size) (!(buf=aligned_alloc(boundary,size)))
+#  define FREEALIGN(buf) free(buf)
+#elif defined(IX86_LINUX) || defined(AARCH64_LINUX) || defined(ARM_LINUX) || (defined(_XOPEN_SOURCE) && (_XOPEN_SOURCE >= 600))
+// See https://www.gnu.org/software/libc/manual/html_node/Aligned-Memory-Blocks.html,
+// https://linux.die.net/man/3/memalign
+//#  if !defined(_XOPEN_SOURCE) || (_XOPEN_SOURCE < 600)
+//#    undef _XOPEN_SOURCE
+//#    define _XOPEN_SOURCE 600
+//#  endif
 #  include <stdlib.h>
 #  define MEMALIGN(buf,boundary,size) posix_memalign(&buf,boundary,size)
-#elif defined(IX86_MACOSX) || defined(ARM_MACOSX) || defined(__APPLE__)
+#  define FREEALIGN(buf) free(buf)
+#elif defined(__linux__)
+#  include <stdlib.h>
+#  include <malloc.h>
+#  define MEMALIGN(buf,boundary,size) (!(buf=memalign(boundary,size)))
+#  define FREEALIGN(buf) free(buf)
+#else
 // According to man page, Intel/MacOSX's malloc aligns correctly for SSE-related types
 #  define MEMALIGN(buf,boundary,size) (!(buf=malloc(size)))
-#else
-#  error "Don't know how to allocate memory aligned on a boundary"
+#  define FREEALIGN(buf) free(buf)
 #endif
 
 #if (__cplusplus >= 201103L)

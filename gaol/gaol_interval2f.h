@@ -103,7 +103,7 @@ namespace gaol {
 		__GAOL_PUBLIC__ void *operator new(size_t sz, void *p);
 		__GAOL_PUBLIC__ void operator delete(void *p, void *place);
 
-			friend interval2f pow(const interval2f& I, int n);
+			//friend interval2f pow(const interval2f& I, int n);
 
 			static __m128 m128_universe(void); // { [-oo, +oo] | [-oo, +oo] }
 			static __m128 m128_emptyset(void); // { \emptyset | \emptyset }

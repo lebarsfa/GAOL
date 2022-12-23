@@ -33,8 +33,8 @@
 #define __gaol_version_msvc_h__
 
 #define GAOL_MAJOR_VERSION 4
-#define GAOL_MINOR_VERSION 1
-#define GAOL_MICRO_VERSION 0
+#define GAOL_MINOR_VERSION 2
+#define GAOL_MICRO_VERSION 3
 // Defining GAOL_VERSION requires some stringification tricks
 #define GAOL_VERSION GAOL_VERSION1(GAOL_MAJOR,GAOL_MINOR,GAOL_MICRO)
 #define GAOL_VERSION1(A,B,C) GAOL_VERSION2(A,B,C)

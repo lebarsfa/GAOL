@@ -48,22 +48,23 @@
 # define INLINE inline
 # include "gaol/gaol_config_msvc.h"
 
-#elif defined (__MINGW32__)
-
-# define GAOL_ERRNO errno
-# undef PACKAGE
-# undef VERSION
-# include "gaol/gaol_config_mingw.h"
-# ifndef __GAOL_PUBLIC__
-#  if defined (HAVE_VISIBILITY_OPTIONS)
-#     define __GAOL_PUBLIC__ __attribute__ ((visibility("default")))
-#  else
-#     define __GAOL_PUBLIC__
-#  endif
-# endif
-# define INLINE inline
-
+//#elif defined (__MINGW32__)
+//
+//# define GAOL_ERRNO errno
+//# undef PACKAGE
+//# undef VERSION
+//# include "gaol/gaol_config_mingw.h"
+//# ifndef __GAOL_PUBLIC__
+//#  if defined (HAVE_VISIBILITY_OPTIONS)
+//#     define __GAOL_PUBLIC__ __attribute__ ((visibility("default")))
+//#  else
+//#     define __GAOL_PUBLIC__
+//#  endif
+//# endif
+//# define INLINE inline
+//
 #elif defined (__GNUC__)
+
 # define GAOL_ERRNO errno
 # undef PACKAGE
 # undef VERSION
@@ -87,6 +88,59 @@
 # endif
 # define INLINE inline
 # include "gaol/gaol_configuration.h"
+
+#endif
+
+/* Try to be more independent from autotools to simplify compatibility with other build systems */
+
+// For Visual Studio, the flags /fp:strict and /Zc:strictStrings- might be necessary. Adding a 
+// partial implementation of unistd.h (e.g. from https://github.com/ENSTABretagneRobotics/OSUtils/blob/master/To%20add%20or%20modify%20if%20needed/VS/unistd.h)
+// and /Zc:__cplusplus might increase portability.
+// Depending on how the code is built, note that gaol_interval_fpu.cpp and 
+// gaol_interval_sse.cpp should not be added to the project, and /D __GAOL_PUBLIC__= might be also useful.
+// gaol_interval2f.cpp should not be added to the project if !USING_SSE3_INSTRUCTIONS.
+
+#if defined(_MSC_VER)
+#   pragma fenv_access(on)
+#else
+// Does not seem to exist in C++...
+// See https://stackoverflow.com/questions/36218367/does-fenv-access-pragma-exist-in-c11-and-higher
+//#   pragma STDC FENV_ACCESS on
+#endif
+
+// See https://devblogs.microsoft.com/cppblog/c99-library-support-in-visual-studio-2013/ 
+// for information about new headers to get Visual Studio closer to C99...
+// See also https://learn.microsoft.com/en-us/cpp/build/reference/zc-cplusplus.
+#if (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L)) || (__cplusplus >= 201103L) || (defined(_MSC_VER) && (_MSC_VER >= 1800))
+#   ifndef HAVE_FENV_H
+#      define HAVE_FENV_H 1
+#   endif
+#   ifndef HAVE_ISNAN
+#      define HAVE_ISNAN 1
+#   endif
+#   ifndef HAVE_NEXTAFTER
+#      define HAVE_NEXTAFTER 1
+#   endif
+#endif // (defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L)) || (__cplusplus >= 201103L) || (defined(_MSC_VER) && (_MSC_VER >= 1800))
+
+#undef HAVE__NEXTAFTER
+#if defined(_MSC_VER)
+#   define HAVE__NEXTAFTER 1
+#endif // defined(_MSC_VER)
+
+#if (__cplusplus >= 199711L) || defined(_MSC_VER)
+#   ifndef HAVE_CLOCK
+#      define HAVE_CLOCK 1
+#   endif
+#   ifndef CLOCK_IN_HEADER
+#      define CLOCK_IN_HEADER 1
+#   endif
+#   ifndef HAVE___SIGNBIT
+#      define HAVE___SIGNBIT 1
+#   endif
+#   ifndef HAVE_LIMITS
+#      define HAVE_LIMITS 1
+#   endif
 #endif
 
 #endif /* __gaol_config_h__ */

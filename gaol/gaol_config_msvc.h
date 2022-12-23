@@ -48,7 +48,7 @@
 #define SIZEOF_LONG_LONG_INT 8
 
 /* Define if you have the clock function.  */
-#define HAVE_CLOCK 1
+//#define HAVE_CLOCK 1
 
 /* Define if you have the getrusage function.  */
 #undef HAVE_GETRUSAGE
@@ -59,28 +59,28 @@
 #undef HAVE_FINITE
 
 /* Define this to 1 if we should use fast fp operations */
-#define GAOL_FAST_MATH 1
+//#define GAOL_FAST_MATH 1
 
 /* Define if you have the round function.  */
 /* #undef HAVE_ROUND */
 
 /* Define if you have the __signbit function.  */
-#define HAVE___SIGNBIT 1
+//#define HAVE___SIGNBIT 1
 
 /* Define if you have the <dlfcn.h> header file.  */
-#define HAVE_DLFCN_H 1
+//#define HAVE_DLFCN_H 1
 
 /* Define if you have the <limits> header file.  */
-#define HAVE_LIMITS 1
+//#define HAVE_LIMITS 1
 
 /* Define if you have the <MathLib.h> header file.  */
 #define HAVE_MATHLIB_H 1
 
 /* Define if you have the <sys/resource.h> header file.  */
-#undef HAVE_SYS_RESOURCE_H
+//#undef HAVE_SYS_RESOURCE_H
 
 /* Define if you have the <time.h> header file.  */
-/* #undef HAVE_TIME_H */
+///* #undef HAVE_TIME_H */
 
 /* define this if you want debugging facilities */
 /* #undef GAOL_DEBUGGING */
@@ -97,6 +97,9 @@
 /* Define this to 1 to allow raising exceptions instead of simply aborting */
 #define GAOL_EXCEPTIONS_ENABLED 1
 
+/* Define this to 1 to enable verbose mode */
+//#define GAOL_VERBOSE_MODE 1
+
 /* Define this if your system is a Linux-based ix86 or compatible */
 /*#undef IX86_LINUX*/
 
@@ -107,12 +110,12 @@
 #undef GETRUSAGE_IN_HEADER
 
 /* Define this to 1 if function clock() is declared in time.h */
-/* #undef CLOCK_IN_HEADER */
+///* #undef CLOCK_IN_HEADER */
 
 /* Define to 1 if you have the `nextafter' function. */
-#define HAVE_NEXTAFTER 0
+//#define HAVE_NEXTAFTER 0
 
-#define HAVE__NEXTAFTER 1
+//#define HAVE__NEXTAFTER 1
 
 /* Define this to 1 if function clock() is declared in time.h */
 /* #undef CLOCK_IN_HEADER */
@@ -120,7 +123,7 @@
 #define GAOL_USING_ASM 1
 
 /* Define if you have the <fenv.h> header file.  */
-#define HAVE_FENV_H 0
+//#define HAVE_FENV_H 0
 
 /* define this to 1 if rounding direction should be preserved */
 #define GAOL_PRESERVE_ROUNDING 1
@@ -128,7 +131,7 @@
 /* Defined to 1 to avoid deprecation warning for C string manipulation functions */
 #define _CRT_SECURE_NO_DEPRECATE 1
 
-#define HAVE_ISNAN 0
+//#define HAVE_ISNAN 0
 
 // Define the following 2 macros to 0 if SSE instructions are not supported
 #define USING_SSE2_INSTRUCTIONS 1

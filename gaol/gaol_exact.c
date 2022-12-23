@@ -19,9 +19,3 @@
  *--------------------------------------------------------------------------*/
 
 #include "gaol/gaol_exact.h"
-
-#if defined (_MSC_VER)
-# include "gaol/sysdeps/gaol_exact_msvc.h"
-#else
-# include "gaol/sysdeps/gaol_exact_c99.h"
-#endif

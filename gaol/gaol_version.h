@@ -31,13 +31,11 @@
 #ifndef __gaol_version_h__
 #define __gaol_version_h__
 
-#if defined (_MSC_VER)
+#if defined (_MSC_VER) /* Windows / Visual C++ */
 # include "gaol/gaol_version_msvc.h"
-
-#elif defined (__MINGW32__)
-// Nothing for now. FIXME!
-
-#elif defined (__GNUC__)
+//#elif defined (__MINGW32__) /* MinGW */
+//# include "gaol/gaol_version_mingw.h"
+#else /* Presumably Linux/gcc/autoconf */
 # include "gaol/gaol_configuration.h"
 #endif
 

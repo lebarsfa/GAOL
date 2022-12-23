@@ -49,7 +49,7 @@
 #define SIZEOF_LONG_LONG_INT 8
 
 /* Define if you have the clock function.  */
-#define HAVE_CLOCK 1
+//#define HAVE_CLOCK 1
 
 /* Define if you have the getrusage function.  */
 #define HAVE_GETRUSAGE 0
@@ -66,13 +66,13 @@
 /* #undef HAVE_ROUND */
 
 /* Define if you have the __signbit function.  */
-#define HAVE___SIGNBIT 1
+//#define HAVE___SIGNBIT 1
 
 /* Define if you have the <dlfcn.h> header file.  */
-#define HAVE_DLFCN_H 1
+//#define HAVE_DLFCN_H 1
 
 /* Define if you have the <limits> header file.  */
-#define HAVE_LIMITS 1
+//#define HAVE_LIMITS 1
 
 /* Define if you have the <MathLib.h> header file.  */
 #define HAVE_MATHLIB_H 1
@@ -81,7 +81,7 @@
 #define HAVE_SYS_RESOURCE_H 1
 
 /* Define if you have the <time.h> header file.  */
-#define HAVE_TIME_H 1
+//#define HAVE_TIME_H 1
 
 /* define this if you want debugging facilities */
 /* #undef GAOL_DEBUGGING */
@@ -98,8 +98,11 @@
 /* Define this to 1 to allow raising exceptions instead of simply aborting */
 #define GAOL_EXCEPTIONS_ENABLED 1
 
+/* Define this to 1 to enable verbose mode */
+//#define GAOL_VERBOSE_MODE 1
+
 /* Define this if your system is a Linux-based ix86 or compatible */
-#define IX86_LINUX 1
+//#define IX86_LINUX 1
 
 /* Define this if your system is a SUN Sparc computer under Solaris */
 /* #undef SPARC_SOLARIS */
@@ -108,15 +111,15 @@
 #define GETRUSAGE_IN_HEADER 1
 
 /* Define this to 1 if function clock() is declared in time.h */
-#define CLOCK_IN_HEADER 1
+//#define CLOCK_IN_HEADER 1
 
 /* Define to 1 if you have the `nextafter' function. */
-#define HAVE_NEXTAFTER 1
+//#define HAVE_NEXTAFTER 1
 
 #define GAOL_USING_ASM 1
 
 /* Define if you have the <fenv.h> header file.  */
-#define HAVE_FENV_H 1
+//#define HAVE_FENV_H 1
 
 /* define this to 1 if rounding direction should be preserved */
 #define GAOL_PRESERVE_ROUNDING 1

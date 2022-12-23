@@ -78,8 +78,8 @@ namespace gaol {
 			__m128& get_xmminterval(void);
 			const __m128& get_xmminterval(void) const;
 
-			typedef float xmm4[4] __attribute__((aligned(16)));
-			typedef double xmm2d[2] __attribute__((aligned(16)));
+			typedef float GAOL_ALIGN16(xmm4[4]);
+			typedef double GAOL_ALIGN16(xmm2d[2]);
 
 			void get_bounds(xmm4& bounds) const;
 

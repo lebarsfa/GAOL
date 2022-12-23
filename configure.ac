@@ -248,13 +248,23 @@ CXXFLAGS="${CXXFLAGS} -Wall -Wconversion"
 
 
 if test ${using_sse2} = no; then
-    case $CXX in
-    icpc)
-        ;;
-    g++)
+
+    # See https://gcc.gnu.org/wiki/FloatingPointMath
+    # Checking for availability of -ffloat-store
+    AC_LANG([C++])
+    OLD_CXXFLAGS=$CXXFLAGS
+    CXXFLAGS="-ffloat-store"
+    AC_MSG_CHECKING(whether the C++ compiler accepts -ffloat-store)
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[has_ffloat_store_opt=yes],[has_ffloat_store_opt=no])
+    AC_MSG_RESULT(${has_ffloat_store_opt})
+    CXXFLAGS=${OLD_CXXFLAGS}
+    AC_LANG([C])
+    if test "${has_ffloat_store_opt}" = yes; then
         CXXFLAGS="${CXXFLAGS} -ffloat-store"
-    ;;
-    esac
+        AC_DEFINE(HAVE_FFLOAT_STORE_OPTION,1,
+            [Define this to 1 if the compiler supports the "-ffloat-store" option])
+    fi
+
 fi
 
 # --enable-debug
@@ -284,6 +294,24 @@ AC_ARG_ENABLE(preserve-rounding,
             [preserve_rounding="yes"])
 if test "${preserve_rounding}" = yes; then
    AC_DEFINE(GAOL_PRESERVE_ROUNDING,1,[define this to 1 if rounding direction should be preserved])
+else
+
+    # See https://stackoverflow.com/questions/7295861/enabling-strict-floating-point-mode-in-gcc
+    # Checking for availability of -mpc64
+    AC_LANG([C++])
+    OLD_CXXFLAGS=$CXXFLAGS
+    CXXFLAGS="-mpc64"
+    AC_MSG_CHECKING(whether the C++ compiler accepts -mpc64)
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[has_mpc64_opt=yes],[has_mpc64_opt=no])
+    AC_MSG_RESULT(${has_mpc64_opt})
+    CXXFLAGS=${OLD_CXXFLAGS}
+    AC_LANG([C])
+    if test "${has_mpc64_opt}" = yes; then
+        CXXFLAGS="${CXXFLAGS} -mpc64"
+        AC_DEFINE(HAVE_MPC64_OPTION,1,
+            [Define this to 1 if the compiler supports the "-mpc64" option])
+    fi
+
 fi
 
 # --enable-relations
@@ -354,15 +382,60 @@ i?86-*-cygwin*)
           [Define this if your system is a cygwin-based ix86 or compatible])
 	AM_CONDITIONAL([IS_CYGWIN_COND],[true])
 	;;
-arm-apple-*)
-	AC_DEFINE(ARM_MACOSX,1,
-          [Define this if your system is a Linux-based ix86 or compatible])
+*86_64-*-cygwin*)
+	AC_DEFINE(IX86_CYGWIN,1,
+          [Define this if your system is a cygwin-based ix86 or compatible])
+	AM_CONDITIONAL([IS_CYGWIN_COND],[true])
+	AC_DEFINE(X86_64BITS,1,
+		  [Define this if the OS is a 64 bits one])
+	;;
+i?86-*-mingw*)
+	AC_DEFINE(IX86_MINGW,1,
+          [Define this if your system is a mingw-based ix86 or compatible])
+	AM_CONDITIONAL([IS_CYGWIN_COND],[true])
+	;;
+*86_64-*-mingw*)
+	AC_DEFINE(IX86_MINGW,1,
+          [Define this if your system is a mingw-based ix86 or compatible])
+	AM_CONDITIONAL([IS_CYGWIN_COND],[true])
+	AC_DEFINE(X86_64BITS,1,
+		  [Define this if the OS is a 64 bits one])
+	;;
+i?86-*-msys*)
+	AC_DEFINE(IX86_MINGW,1,
+          [Define this if your system is a mingw-based ix86 or compatible])
+	AM_CONDITIONAL([IS_CYGWIN_COND],[true])
+	;;
+*86_64-*-msys*)
+	AC_DEFINE(IX86_MINGW,1,
+          [Define this if your system is a mingw-based ix86 or compatible])
+	AM_CONDITIONAL([IS_CYGWIN_COND],[true])
+	AC_DEFINE(X86_64BITS,1,
+		  [Define this if the OS is a 64 bits one])
+	;;
+i?86-apple*)
+	AC_DEFINE(IX86_MACOSX,1,
+          [Define this if your system is a macOS-based ix86 or compatible])
 	AM_CONDITIONAL([IS_CYGWIN_COND],[false])
 	;;
-i?86-apple-*)
+*86_64-apple*)
 	AC_DEFINE(IX86_MACOSX,1,
-          [Define this if your system is a Linux-based ix86 or compatible])
+          [Define this if your system is a macOS-based ix86 or compatible])
 	AM_CONDITIONAL([IS_CYGWIN_COND],[false])
+	AC_DEFINE(X86_64BITS,1,
+		  [Define this if the OS is a 64 bits one])
+	;;
+arm*-apple*)
+	AC_DEFINE(ARM_MACOSX,1,
+          [Define this if your system is a macOS-based arm or compatible])
+	AM_CONDITIONAL([IS_CYGWIN_COND],[false])
+	;;
+aarch64*-apple*)
+	AC_DEFINE(ARM_MACOSX,1,
+          [Define this if your system is a macOS-based arm or compatible])
+	AM_CONDITIONAL([IS_CYGWIN_COND],[false])
+	AC_DEFINE(X86_64BITS,1,
+		  [Define this if the OS is a 64 bits one])
 	;;
 sparc*-solaris*)
 	AC_DEFINE(SPARC_SOLARIS,1,
@@ -374,10 +447,17 @@ powerpc*)
 	  [Define this if your system is a PowerPc under MacOs X])
 	AM_CONDITIONAL([IS_CYGWIN_COND],[false])
 	;;
-aarch64-*-linux-*)
-	AC_DEFINE(AARCH64_LINUX,1,
-		[Define this if your system is an AARCH64-based computer under Linux])
+arm*-*-linux*)
+	AC_DEFINE(ARM_LINUX,1,
+		[Define this if your system is an arm-based computer under Linux])
 	AM_CONDITIONAL([IS_CYGWIN_COND],[false])
+	;;
+aarch64*-*-linux*)
+	AC_DEFINE(AARCH64_LINUX,1,
+		[Define this if your system is an aarch64-based computer under Linux])
+	AM_CONDITIONAL([IS_CYGWIN_COND],[false])
+	AC_DEFINE(X86_64BITS,1,
+		  [Define this if the OS is a 64 bits one])
 	;;
 *)
 	AC_MSG_ERROR([Sorry, this system is not yet supported by gaol])
@@ -484,42 +564,116 @@ AC_CHECK_SIZEOF(int, 4)
 AC_CHECK_SIZEOF(long, 4)
 AC_CHECK_SIZEOF(long long int,8)
 
-
 # Checking for availability of -std=c++11
 AC_LANG([C++])
-if test "$CXX" = "g++"; then
-    OLD_CXXFLAGS=$CXXFLAGS
-    CXXFLAGS="-std=c++11"
-    AC_MSG_CHECKING(whether the C++ compiler accepts -std=c++11)
-    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[has_std_cpp11_opt=yes],[has_std_cpp11_opt=no])
-    AC_MSG_RESULT(${has_std_cpp11_opt})
-    CXXFLAGS=${OLD_CXXFLAGS}
-    AC_LANG([C])
-    if test "${has_std_cpp11_opt}" = yes; then
-        CXXFLAGS="${CXXFLAGS} -std=c++11"
-        AC_DEFINE(HAVE_STD_CPP11_OPTION,1,
-            [Define this to 1 if the compiler supports the "-std=c++11" option])
-    fi
+OLD_CXXFLAGS=$CXXFLAGS
+CXXFLAGS="-std=c++11"
+AC_MSG_CHECKING(whether the C++ compiler accepts -std=c++11)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[has_std_cpp11_opt=yes],[has_std_cpp11_opt=no])
+AC_MSG_RESULT(${has_std_cpp11_opt})
+CXXFLAGS=${OLD_CXXFLAGS}
+AC_LANG([C])
+if test "${has_std_cpp11_opt}" = yes; then
+    CXXFLAGS="${CXXFLAGS} -std=c++11"
+    AC_DEFINE(HAVE_STD_CPP11_OPTION,1,
+        [Define this to 1 if the compiler supports the "-std=c++11" option])
 fi
 
-
+# See https://gcc.gnu.org/wiki/FloatingPointMath
 # Checking for availability of -frounding-math
 AC_LANG([C++])
-if test "$CXX" = "g++"; then
-    OLD_CXXFLAGS=$CXXFLAGS
-    CXXFLAGS="-frounding-math"
-    AC_MSG_CHECKING(whether the C++ compiler accepts -frounding-math)
-    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[has_rounding_math_opt=yes],[has_rounding_math_opt=no])
-    AC_MSG_RESULT(${has_rounding_math_opt})
-    CXXFLAGS=${OLD_CXXFLAGS}
-    AC_LANG([C])
-    if test "${has_rounding_math_opt}" = yes; then
-        CXXFLAGS="${CXXFLAGS} -frounding-math"
-        AC_DEFINE(HAVE_ROUNDING_MATH_OPTION,1,
-            [Define this to 1 if the compiler supports the "-frounding-math" option])
-    fi
+OLD_CXXFLAGS=$CXXFLAGS
+CXXFLAGS="-frounding-math"
+AC_MSG_CHECKING(whether the C++ compiler accepts -frounding-math)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[has_frounding_math_opt=yes],[has_frounding_math_opt=no])
+AC_MSG_RESULT(${has_frounding_math_opt})
+CXXFLAGS=${OLD_CXXFLAGS}
+AC_LANG([C])
+if test "${has_frounding_math_opt}" = yes; then
+    CXXFLAGS="${CXXFLAGS} -frounding-math"
+    AC_DEFINE(HAVE_FROUNDING_MATH_OPTION,1,
+        [Define this to 1 if the compiler supports the "-frounding-math" option])
 fi
 
+# See https://developer.arm.com/documentation/100067/0612/armclang-Command-line-Options/-ffp-mode
+# Checking for availability of -ffp-mode=full
+AC_LANG([C++])
+OLD_CXXFLAGS=$CXXFLAGS
+CXXFLAGS="-ffp-mode=full"
+AC_MSG_CHECKING(whether the C++ compiler accepts -ffp-mode=full)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[has_ffp_mode_full_opt=yes],[has_ffp_mode_full_opt=no])
+AC_MSG_RESULT(${has_ffp_mode_full_opt})
+CXXFLAGS=${OLD_CXXFLAGS}
+AC_LANG([C])
+if test "${has_ffp_mode_full_opt}" = yes; then
+    CXXFLAGS="${CXXFLAGS} -ffp-mode=full"
+    AC_DEFINE(HAVE_FFP_MODE_FULL_OPTION,1,
+        [Define this to 1 if the compiler supports the "-ffp-mode=full" option])
+fi
+
+# See https://bugs.llvm.org/show_bug.cgi?id=8100
+# Checking for availability of -fp-model=strict
+AC_LANG([C++])
+OLD_CXXFLAGS=$CXXFLAGS
+CXXFLAGS="-fp-model=strict"
+AC_MSG_CHECKING(whether the C++ compiler accepts -fp-model=strict)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[has_fp_model_strict_opt=yes],[has_fp_model_strict_opt=no])
+AC_MSG_RESULT(${has_fp_model_strict_opt})
+CXXFLAGS=${OLD_CXXFLAGS}
+AC_LANG([C])
+if test "${has_fp_model_strict_opt}" = yes; then
+    CXXFLAGS="${CXXFLAGS} -fp-model=strict"
+    AC_DEFINE(HAVE_FP_MODEL_STRICT_OPTION,1,
+        [Define this to 1 if the compiler supports the "-fp-model=strict" option])
+fi
+
+# See https://learn.microsoft.com/en-us/cpp/build/reference/fp-specify-floating-point-behavior
+# Checking for availability of -fp:strict
+AC_LANG([C++])
+OLD_CXXFLAGS=$CXXFLAGS
+CXXFLAGS="-fp:strict"
+AC_MSG_CHECKING(whether the C++ compiler accepts -fp:strict)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[has_fp_strict_opt=yes],[has_fp_strict_opt=no])
+AC_MSG_RESULT(${has_fp_strict_opt})
+CXXFLAGS=${OLD_CXXFLAGS}
+AC_LANG([C])
+if test "${has_fp_strict_opt}" = yes; then
+    CXXFLAGS="${CXXFLAGS} -fp:strict"
+    AC_DEFINE(HAVE_FP_STRICT_OPTION,1,
+        [Define this to 1 if the compiler supports the "-fp:strict" option])
+fi
+
+# See https://stackoverflow.com/questions/64036879/differing-floating-point-calculation-results-between-x86-64-and-armv8-2-a
+# Checking for availability of -fno-fast-math
+AC_LANG([C++])
+OLD_CXXFLAGS=$CXXFLAGS
+CXXFLAGS="-fno-fast-math"
+AC_MSG_CHECKING(whether the C++ compiler accepts -fno-fast-math)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[has_fno_fast_math_opt=yes],[has_fno_fast_math_opt=no])
+AC_MSG_RESULT(${has_fno_fast_math_opt})
+CXXFLAGS=${OLD_CXXFLAGS}
+AC_LANG([C])
+if test "${has_fno_fast_math_opt}" = yes; then
+    CXXFLAGS="${CXXFLAGS} -fno-fast-math"
+    AC_DEFINE(HAVE_FNO_FAST_MATH_OPTION,1,
+        [Define this to 1 if the compiler supports the "-fno-fast-math" option])
+fi
+
+# See https://stackoverflow.com/questions/64036879/differing-floating-point-calculation-results-between-x86-64-and-armv8-2-a
+# Checking for availability of -ffp-contract=off
+AC_LANG([C++])
+OLD_CXXFLAGS=$CXXFLAGS
+CXXFLAGS="-ffp-contract=off"
+AC_MSG_CHECKING(whether the C++ compiler accepts -ffp-contract=off)
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[has_ffp_contract_off_opt=yes],[has_ffp_contract_off_opt=no])
+AC_MSG_RESULT(${has_ffp_contract_off_opt})
+CXXFLAGS=${OLD_CXXFLAGS}
+AC_LANG([C])
+if test "${has_ffp_contract_off_opt}" = yes; then
+    CXXFLAGS="${CXXFLAGS} -ffp-contract=off"
+    AC_DEFINE(HAVE_FFP_CONTRACT_OFF_OPTION,1,
+        [Define this to 1 if the compiler supports the "-ffp-contract=off" option])
+fi
 
 # Checks for library functions.
 AC_LANG([C++])

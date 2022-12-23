@@ -43,9 +43,14 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
-int get_inexact(void);
-void clear_inexact(void);
+
+#if HAVE_FENV_H
+#   include "gaol/sysdeps/gaol_exact_c99.h"
+#elif defined (_MSC_VER)
+#   include "gaol/sysdeps/gaol_exact_msvc.h"
+#else
+#   error "Don't know how to define FPU manipulation functions"
+#endif // HAVE_FENV_H
 
 #ifdef __cplusplus
 }

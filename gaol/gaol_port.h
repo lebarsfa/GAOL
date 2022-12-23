@@ -24,7 +24,7 @@
 
   <long description>
 
-  \author Frédéric Goualard
+  \author FrÃ©dÃ©ric Goualard
   \date   2001-10-03
 */
 
@@ -55,19 +55,20 @@
 #  include <stdlib.h>
 #  include <malloc.h>
 #  define MEMALIGN(buf,boundary,size) (!(buf=_mm_malloc(size,boundary)))
-#elif defined(IX86_LINUX) || defined(AARCH64_LINUX)
+#elif defined(IX86_LINUX) || defined(AARCH64_LINUX) || defined(ARM_LINUX) || defined(__linux__)
 #  undef _XOPEN_SOURCE
 #  define _XOPEN_SOURCE 600
 #  include <stdlib.h>
 #  define MEMALIGN(buf,boundary,size) posix_memalign(&buf,boundary,size)
-#elif defined(IX86_MACOSX) || defined(ARM_MACOSX)
+#elif defined(IX86_MACOSX) || defined(ARM_MACOSX) || defined(__APPLE__)
 // According to man page, Intel/MacOSX's malloc aligns correctly for SSE-related types
 #  define MEMALIGN(buf,boundary,size) (!(buf=malloc(size)))
 #else
 #  error "Don't know how to allocate memory aligned on a boundary"
 #endif
 
-
+#if (__cplusplus >= 201103L)
+#else
 #if defined (_MSC_VER)
 #   if HAVE_NEXTAFTER
 	// Nothing to do
@@ -83,7 +84,17 @@
 #       define isnan _isnan
 #   endif
 #endif // defined(MSC_VER)
+#endif // (__cplusplus >= 201103L)
 
+#ifdef _WIN32
+#   include <stdlib.h>
+#   ifndef srand48
+#       define srand48(x) srand(x)
+#   endif
+#   ifndef drand48
+#       define drand48() ((double) rand() / ((double) RAND_MAX + 1.0))
+#   endif
+#endif
 
 namespace gaol {
 
@@ -129,8 +140,8 @@ namespace gaol {
     double d;
   } uintdouble;
 
-
-#if WORDS_BIGENDIAN
+// From https://stackoverflow.com/questions/8978935/detecting-endianness
+#if WORDS_BIGENDIAN || (defined(__BYTE_ORDER__)&&(__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__))
 #  define IFBIGENDIAN(a,b)   (a), (b)
 #  define __HI(x) (*(INT_FOR_DOUBLE*)&(x))
 #  define __LO(x) (*((INT_FOR_DOUBLE)1+(INT_FOR_DOUBLE*)&(x)))
@@ -144,6 +155,15 @@ namespace gaol {
 #  define HI_UINTDOUBLE(a) ((a).i[1])
 #endif
 
+
+#if (__cplusplus >= 201103L) || defined (_MSC_VER)
+#ifndef GAOL_NAN
+#  define GAOL_NAN std::numeric_limits<double>::quiet_NaN()
+#endif
+#ifndef GAOL_INFINITY
+#define GAOL_INFINITY std::numeric_limits<double>::infinity()
+#endif
+#else
 #ifndef GAOL_NAN
   static uintdouble NaN_val = {{IFBIGENDIAN(0x7ff80000, 0x0)}};
 #define GAOL_NAN (gaol::NaN_val.d)
@@ -153,7 +173,10 @@ namespace gaol {
   /* We cannot use the definition above because some versions of libc++ do not
      define the infinity() method correctly.
   */
+#ifndef GAOL_INFINITY
 #define GAOL_INFINITY HUGE_VAL
+#endif
+#endif // (__cplusplus >= 201103L) || defined (_MSC_VER)
 
   /*
     Various constants rounded up and down
@@ -193,11 +216,15 @@ namespace gaol {
    */
   INLINE int is_finite(double d)
   {
-#if HAVE_FINITE
-    return finite(d);
+#if (__cplusplus >= 201103L)
+    return std::isfinite(d);
 #else
+#	if HAVE_FINITE
+    return finite(d);
+#	else
     return (d==d && d!=GAOL_INFINITY && d!=-GAOL_INFINITY);
-#endif
+#	endif
+#endif // (__cplusplus >= 201103L)
   }
 
 

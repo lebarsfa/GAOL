@@ -126,7 +126,8 @@
 //#define HAVE_FENV_H 0
 
 /* define this to 1 if rounding direction should be preserved */
-#define GAOL_PRESERVE_ROUNDING 1
+//#define GAOL_PRESERVE_ROUNDING 1
+#undef GAOL_PRESERVE_ROUNDING
 
 /* Defined to 1 to avoid deprecation warning for C string manipulation functions */
 #define _CRT_SECURE_NO_DEPRECATE 1

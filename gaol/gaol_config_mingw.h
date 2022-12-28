@@ -125,6 +125,10 @@
 //#define GAOL_PRESERVE_ROUNDING 1
 #undef GAOL_PRESERVE_ROUNDING
 
-#define USING_SSE2_INSTRUCTIONS 1
+// Define the following 2 macros to 0 if SSE instructions are not supported
+//#define USING_SSE2_INSTRUCTIONS 1
+#undef USING_SSE2_INSTRUCTIONS
+//#define USING_SSE3_INSTRUCTIONS 1
+#undef USING_SSE3_INSTRUCTIONS
 
 #endif /* __gaol_config_mingw_h__ */

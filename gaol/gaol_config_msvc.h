@@ -135,7 +135,9 @@
 //#define HAVE_ISNAN 0
 
 // Define the following 2 macros to 0 if SSE instructions are not supported
-#define USING_SSE2_INSTRUCTIONS 1
-#define USING_SSE3_INSTRUCTIONS 1
+//#define USING_SSE2_INSTRUCTIONS 1
+#undef USING_SSE2_INSTRUCTIONS
+//#define USING_SSE3_INSTRUCTIONS 1
+#undef USING_SSE3_INSTRUCTIONS
 
 #endif /* __gaol_config_msvc_h__ */

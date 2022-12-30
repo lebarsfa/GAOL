@@ -43,7 +43,7 @@ public:
 	TEST_EQ(cos(interval(-16,-14)),interval("[-1,0.136737218207833]"));
 	TEST_EQ(cos(interval(-102,-100)),interval("[0.101585703696621,1]"));
 	TEST_EQ(cos(interval(4.6e15,4.7e15)),interval(-1,1));
-	TEST_EQ(cos(interval(4503599627370495,4503599627370496)),interval("[-0.48553486774222065, 0.4732928859543091]"));
+	TEST_EQ(cos(interval(4503599627370495.0,4503599627370496.0)),interval("[-0.48553486774222065, 0.4732928859543091]"));
   }
 
   void test_sin() {

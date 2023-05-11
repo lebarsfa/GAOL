@@ -67,15 +67,7 @@
 // Seems to work better than the others when SSE2 enabled...
 #  define MEMALIGN(buf,boundary,size) (!(buf=malloc(size)))
 #  define FREEALIGN(buf) free(buf)
-#elif (__cplusplus >= 201703L)
-#  include <cstdlib>
-#  define MEMALIGN(buf,boundary,size) (!(buf=std::aligned_alloc(boundary,size)))
-#  define FREEALIGN(buf) std::free(buf)
-#elif defined (__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
-#  include <stdlib.h>
-#  define MEMALIGN(buf,boundary,size) (!(buf=aligned_alloc(boundary,size)))
-#  define FREEALIGN(buf) free(buf)
-#elif defined(IX86_LINUX) || defined(AARCH64_LINUX) || defined(ARM_LINUX) || (defined(_XOPEN_SOURCE) && (_XOPEN_SOURCE >= 600))
+#elif defined(IX86_LINUX) || defined(AARCH64_LINUX) || defined(ARM_LINUX) || (defined(_XOPEN_SOURCE) && (_XOPEN_SOURCE >= 600)) || (defined(__MAC_OS_X_VERSION_MAX_ALLOWED) && (__MAC_OS_X_VERSION_MAX_ALLOWED >= __MAC_10_0)) || (defined(MAC_OS_X_VERSION_MAX_ALLOWED) && (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_0))
 // See https://www.gnu.org/software/libc/manual/html_node/Aligned-Memory-Blocks.html,
 // https://linux.die.net/man/3/memalign
 //#  if !defined(_XOPEN_SOURCE) || (_XOPEN_SOURCE < 600)
@@ -89,6 +81,14 @@
 #  include <stdlib.h>
 #  include <malloc.h>
 #  define MEMALIGN(buf,boundary,size) (!(buf=memalign(boundary,size)))
+#  define FREEALIGN(buf) free(buf)
+#elif (__cplusplus >= 201703L)
+#  include <cstdlib>
+#  define MEMALIGN(buf,boundary,size) (!(buf=std::aligned_alloc(boundary,size)))
+#  define FREEALIGN(buf) std::free(buf)
+#elif defined (__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
+#  include <stdlib.h>
+#  define MEMALIGN(buf,boundary,size) (!(buf=aligned_alloc(boundary,size)))
 #  define FREEALIGN(buf) free(buf)
 #else
 // According to man page, Intel/MacOSX's malloc aligns correctly for SSE-related types

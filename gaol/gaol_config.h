@@ -38,11 +38,14 @@
 #if defined (_MSC_VER)
 
 # define GAOL_ERRNO errno
+// No shared library support a.t.m.
 # ifndef __GAOL_PUBLIC__
 #   ifdef _COMPILING__GAOL_PUBLIC__
-#     define __GAOL_PUBLIC__ __declspec(dllexport)
+//#     define __GAOL_PUBLIC__ __declspec(dllexport)
+#     define __GAOL_PUBLIC__
 #   else
-#     define __GAOL_PUBLIC__ __declspec(dllimport)
+//#     define __GAOL_PUBLIC__ __declspec(dllimport)
+#     define __GAOL_PUBLIC__
 #   endif
 # endif
 # define INLINE inline

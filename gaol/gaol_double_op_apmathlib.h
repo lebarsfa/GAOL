@@ -39,6 +39,7 @@
 #include "gaol/gaol_assert.h"
 #include "gaol/gaol_common.h"
 
+#ifndef _MATHLIB_DLL_
 #if defined (_MSC_VER)
 # define _MATHLIB_DLL_ extern "C" __declspec(dllimport)
 #elif defined (__GNUC__)
@@ -46,6 +47,8 @@
 #else
 # define _MATHLIB_DLL_ extern "C"
 #endif
+#else
+#endif // _MATHLIB_DLL_
 
 _MATHLIB_DLL_ unsigned short Init_Lib();
 _MATHLIB_DLL_ void Exit_Lib(unsigned short);

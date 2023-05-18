@@ -1,13 +1,13 @@
 # From https://gitlab.com/CLIUtils/modern-cmake/-/blob/b47192867e86e5f00f70ec860638a28473edc8bf/examples/extended-project/CMakeLists.txt
 
-message(WARNING "Please copy gaol/gaol_double_op_apmathlib.h to gaol/gaol_double_op.h, and gaol/gaol_config_mingw.h to gaol/gaol_configuration.h and customize it...")
+#message(WARNING "Please copy gaol/gaol_double_op_apmathlib.h to gaol/gaol_double_op.h, and gaol/gaol_config_mingw.h to gaol/gaol_configuration.h and customize it...")
 
 # Works with 3.14 and tested through 3.25
 cmake_minimum_required(VERSION 3.14...3.25)
 
 # Project name and a few useful settings. Other commands can pick up the results
 project(
-  GAOL
+  gaol
   VERSION 4.2.3
 #  DESCRIPTION "An example project with CMake"
   LANGUAGES C CXX)
@@ -47,14 +47,28 @@ include(FetchContent)
 #find_package(Boost REQUIRED)
 # Adds Boost::boost
 
-FetchContent_Declare(
-  mathlib
-  URL https://github.com/lebarsfa/mathlib/archive/refs/heads/master.zip
-#  URL ${CMAKE_SOURCE_DIR}/../mathlib-master.zip
-#  FIND_PACKAGE_ARGS
-)
-FetchContent_MakeAvailable(mathlib)
-# Adds mathlib::ultim
+find_package(mathlib QUIET)
+if(mathlib_FOUND)
+else()
+#  FetchContent_Declare(
+#    mathlib
+#    URL https://github.com/lebarsfa/mathlib/archive/refs/heads/master.zip
+#  #  URL ${CMAKE_SOURCE_DIR}/../mathlib-master.zip
+#  #  FIND_PACKAGE_ARGS
+#  )
+#  FetchContent_MakeAvailable(mathlib)
+#  # Adds mathlib::ultim
+endif()
+
+if(MSVC)
+  FetchContent_Declare(
+    unistd_msvc
+    URL https://github.com/ENSTABretagneRobotics/OSUtils/raw/master/To%20add%20or%20modify%20if%20needed/VS/unistd.h
+	DOWNLOAD_NO_EXTRACT true
+#	INSTALL_DIR
+  )
+  FetchContent_MakeAvailable(unistd_msvc)
+endif()
 
 # The compiled library code is here
 add_subdirectory(gaol)
@@ -86,10 +100,11 @@ ${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_allocator.h
 ${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_assert.h
 ${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_common.h
 ${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_config.h
-${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_configuration.h
-${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_double_op.h
+${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_config_mingw.h # To check...
+${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_config_msvc.h # To check...
 ${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_double_op_apmathlib.h
 ${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_double_op_crlibm.h
+${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_double_op_m.h
 ${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_eval_stack.h
 ${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_exact.h
 ${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_exceptions.h
@@ -111,11 +126,13 @@ ${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_parameters.h
 ${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_parser.h
 ${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_port.h
 ${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_profile.h
-${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_version.h
+${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_version.h # To check...
+${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_version_mingw.h # To check...
+${CMAKE_CURRENT_SOURCE_DIR}/gaol/gaol_version_msvc.h # To check...
 ${CMAKE_CURRENT_SOURCE_DIR}/gaol/sysdeps/gaol_exact_c99.h
 ${CMAKE_CURRENT_SOURCE_DIR}/gaol/sysdeps/gaol_exact_msvc.h
-#_double_op.h
-#_configuration.h
+#_double_op.h # To check...
+#_configuration.h # To check...
     DESTINATION include/gaol
 )
 
@@ -129,11 +146,11 @@ write_basic_package_version_file(
 install(EXPORT gaolTargets
         FILE gaolTargets.cmake
         NAMESPACE gaol::
-        DESTINATION lib/cmake/gaol
+        DESTINATION share/cmake/gaol
          )
 		 
 configure_file(gaolConfig.cmake.in gaolConfig.cmake @ONLY)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/gaolConfig.cmake"
               "${CMAKE_CURRENT_BINARY_DIR}/gaolConfigVersion.cmake"
-        DESTINATION lib/cmake/gaol
+        DESTINATION share/cmake/gaol
         )

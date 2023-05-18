@@ -29,16 +29,24 @@ ${OTHER_SOURCES_AND_HEADERS_LIST})
 # We need this directory, and users of our library will need it too
 #target_include_directories(gaol PUBLIC ../include)
 target_include_directories(gaol 
-#	PUBLIC
-#        $<INSTALL_INTERFACE:.>
+	PUBLIC
+        $<INSTALL_INTERFACE:include>
 	PRIVATE
-		..)
+		.. ${unistd_msvc_SOURCE_DIR}
+)
 
 # This depends on (header only) boost
 #target_link_libraries(gaol PRIVATE Boost::boost)
 
+target_link_libraries(gaol PUBLIC mathlib::ultim)
+
 # All users of this library will need at least C++11
 #target_compile_features(gaol PUBLIC cxx_std_11)
+
+if(MSVC)
+  add_definitions(-D_COMPILING__GAOL_PUBLIC__)
+  add_definitions(-D_MATHLIB_DLL_=extern\ \"C\")
+endif()
 
 include(CheckCCompilerFlag)
 check_c_compiler_flag ("-frounding-math" COMPILER_SUPPORTS_FROUNDING_MATH)

@@ -6,7 +6,8 @@
 # Optionally glob, but only for CMake 3.12 or later:
 # file(GLOB HEADER_LIST CONFIGURE_DEPENDS "${gaol_SOURCE_DIR}/include/modern/*.hpp")
 #set(HEADER_LIST "${gaol_SOURCE_DIR}/include/modern/lib.hpp")
-file(GLOB OTHER_SOURCES_AND_HEADERS_LIST CONFIGURE_DEPENDS "${gaol_SOURCE_DIR}/*.h" "${gaol_SOURCE_DIR}/*.hpp" "${gaol_SOURCE_DIR}/*.ypp")
+file(GLOB HEADER_LIST CONFIGURE_DEPENDS "${gaol_SOURCE_DIR}/gaol/*.h" "${gaol_SOURCE_DIR}/gaol/*.hpp")
+file(GLOB OTHER_LIST CONFIGURE_DEPENDS "${gaol_SOURCE_DIR}/gaol/*.ypp")
 
 # Make an automatic library - will be static or dynamic based on user setting
 add_library(gaol 
@@ -23,8 +24,8 @@ gaol_parser.cpp
 gaol_port.cpp
 gaol_profile.cpp
 s_nextafter.c
-${OTHER_SOURCES_AND_HEADERS_LIST})
-
+${HEADER_LIST}
+${OTHER_LIST})
 
 # We need this directory, and users of our library will need it too
 #target_include_directories(gaol PUBLIC ../include)
@@ -43,44 +44,24 @@ target_link_libraries(gaol PUBLIC mathlib::ultim)
 # All users of this library will need at least C++11
 #target_compile_features(gaol PUBLIC cxx_std_11)
 
+# See https://github.com/friendlyanon/cxx-static-shared-example
+include(GenerateExportHeader)
+generate_export_header(
+    gaol
+    BASE_NAME gaol
+    EXPORT_FILE_NAME gaol_configuration.h # Not used a.t.m.
+)
+
+if(NOT BUILD_SHARED_LIBS)
+  target_compile_definitions(gaol PUBLIC gaol_STATIC_DEFINE)
+else()
+  target_compile_definitions(gaol PUBLIC gaol_SHARED_DEFINE) # For compatibility...
+endif()
+
 if(MSVC)
   add_definitions(-D_COMPILING__GAOL_PUBLIC__)
   add_definitions(-D_MATHLIB_DLL_=extern\ \"C\")
 endif()
-
-include(CheckCCompilerFlag)
-check_c_compiler_flag ("-frounding-math" COMPILER_SUPPORTS_FROUNDING_MATH)
-if (COMPILER_SUPPORTS_FROUNDING_MATH)
-  target_compile_options(gaol PUBLIC "-frounding-math")
-endif ()
-check_c_compiler_flag ("-ffloat-store" COMPILER_SUPPORTS_FFLOAT_STORE)
-if (COMPILER_SUPPORTS_FFLOAT_STORE)
-  target_compile_options(gaol PUBLIC "-ffloat-store")
-endif ()
-check_c_compiler_flag ("-fno-fast-math" COMPILER_SUPPORTS_FNO_FAST_MATH)
-if (COMPILER_SUPPORTS_FNO_FAST_MATH)
-  target_compile_options(gaol PUBLIC "-fno-fast-math")
-endif ()
-check_c_compiler_flag ("-ffp-contract=off" COMPILER_SUPPORTS_FFP_CONTRACT_OFF)  
-if (COMPILER_SUPPORTS_FFP_CONTRACT_OFF)
-  target_compile_options(gaol PUBLIC "-ffp-contract=off")
-endif ()
-check_c_compiler_flag ("-ffp-mode=full" COMPILER_SUPPORTS_FFP_MODE_FULL)  
-if (COMPILER_SUPPORTS_FFP_MODE_FULL)
-  target_compile_options(gaol PUBLIC "-ffp-mode=full")
-endif ()
-check_c_compiler_flag ("-fp-model=strict" COMPILER_SUPPORTS_FP_MODEL_STRICT)  
-if (COMPILER_SUPPORTS_FP_MODEL_STRICT)
-  target_compile_options(gaol PUBLIC "-fp-model=strict")
-endif ()
-check_c_compiler_flag ("-fp:strict" COMPILER_SUPPORTS_FP_STRICT)  
-if (COMPILER_SUPPORTS_FP_STRICT)
-  target_compile_options(gaol PUBLIC "-fp:strict")
-endif ()
-check_c_compiler_flag ("-mpc64" COMPILER_SUPPORTS_MPC64)  
-if (COMPILER_SUPPORTS_MPC64)
-  target_compile_options(gaol PUBLIC "-mpc64")
-endif ()
 
 # IDEs should put the headers in a nice place
 #source_group(

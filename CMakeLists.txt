@@ -68,7 +68,8 @@ endif()
 if(MSVC)
   FetchContent_Declare(
     unistd_msvc
-    URL https://github.com/ENSTABretagneRobotics/OSUtils/raw/master/To%20add%20or%20modify%20if%20needed/VS/unistd.h
+#    URL https://github.com/ENSTABretagneRobotics/OSUtils/raw/master/To%20add%20or%20modify%20if%20needed/VS/unistd.h
+    URL "${CMAKE_CURRENT_SOURCE_DIR}/3rd/unistd.h"
 	DOWNLOAD_NO_EXTRACT true
 #	INSTALL_DIR
   )

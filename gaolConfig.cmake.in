@@ -13,5 +13,7 @@ if(MSVC)
   add_definitions(-D__GAOL_PUBLIC__=)
 endif()
 
+# TODO: check if flags, definitions should be added depending on options...
+
 # Add the targets file
 include("${CMAKE_CURRENT_LIST_DIR}/gaolTargets.cmake")

@@ -63,6 +63,80 @@ if(MSVC)
   add_definitions(-D_MATHLIB_DLL_=extern\ \"C\")
 endif()
 
+
+
+# TO CHECK DEFAULTS DEPENDING ON THE COMPILER, ALSO THE .CMAKE...
+
+include(CheckCXXCompilerFlag)
+
+#option(USE_ENABLE_SIMD "Use SIMD instructions to implement arithmetic operations" ON)
+option(USE_ENABLE_SIMD "Use SIMD instructions to implement arithmetic operations" OFF)
+if(USE_ENABLE_SIMD)
+  check_cxx_compiler_flag("--enable-simd" COMPILER_SUPPORTS_ENABLE_SIMD)
+  if(COMPILER_SUPPORTS_ENABLE_SIMD)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --enable-simd")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --enable-simd")
+  endif()
+endif()
+
+#option(USE_SSE2 "Use SSE2 instructions" ON)
+option(USE_SSE2 "Use SSE2 instructions" OFF)
+if(USE_SSE2)
+  add_definitions(-DUSING_SSE2_INSTRUCTIONS)
+  check_cxx_compiler_flag("/arch:SSE2" COMPILER_SUPPORTS_ARCH_SSE2)
+  if(COMPILER_SUPPORTS_ARCH_SSE2)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /arch:SSE2")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:SSE2")
+  endif()
+  check_cxx_compiler_flag("-xP" COMPILER_SUPPORTS_XP)
+  check_cxx_compiler_flag("-mtune=pentium4" COMPILER_SUPPORTS_MTUNE_PENTIUM4)
+  if((COMPILER_SUPPORTS_XP) AND (COMPILER_SUPPORTS_MTUNE_PENTIUM4))
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -xP -mtune=pentium4")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -xP -mtune=pentium4")
+  endif()
+  check_cxx_compiler_flag("-msse2" COMPILER_SUPPORTS_MSSE2)
+  if(COMPILER_SUPPORTS_MSSE2)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse2")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse2")
+  endif()
+endif()
+
+#option(USE_SSE3 "Use SSE3 instructions" ON)
+option(USE_SSE3 "Use SSE3 instructions" OFF)
+if(USE_SSE3)
+  add_definitions(-DUSING_SSE3_INSTRUCTIONS)
+  check_cxx_compiler_flag("-msse3" COMPILER_SUPPORTS_MSSE3)
+  if(COMPILER_SUPPORTS_MSSE3)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse3")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse3")
+  endif()
+endif()
+
+#option(USE_GAOL_VERBOSE_MODE "Use verbose mode" ON)
+option(USE_GAOL_VERBOSE_MODE "Use verbose mode" OFF)
+if(USE_GAOL_VERBOSE_MODE)
+  add_definitions(-DGAOL_VERBOSE_MODE)
+endif()
+
+option(USE_GAOL_DEBUGGING "Use debugging facilities" OFF)
+if(USE_GAOL_DEBUGGING)
+  add_definitions(-DGAOL_DEBUGGING)
+endif()
+
+#option(USE_GAOL_PRESERVE_ROUNDING "Transparently manipulates the FPU control flags" ON)
+option(USE_GAOL_PRESERVE_ROUNDING "Transparently manipulates the FPU control flags" OFF)
+if(USE_GAOL_PRESERVE_ROUNDING)
+  add_definitions(-DGAOL_PRESERVE_ROUNDING)
+endif()
+
+#option(USE_GAOL_EXCEPTIONS_ENABLED "Raise exceptions to signal errors" ON)
+option(USE_GAOL_EXCEPTIONS_ENABLED "Raise exceptions to signal errors" OFF)
+if(USE_GAOL_EXCEPTIONS_ENABLED)
+  add_definitions(-DGAOL_EXCEPTIONS_ENABLED)
+endif()
+
+
+
 # IDEs should put the headers in a nice place
 #source_group(
 #  TREE "${PROJECT_SOURCE_DIR}/include"

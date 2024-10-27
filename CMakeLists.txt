@@ -55,14 +55,14 @@ include(FetchContent)
 find_package(mathlib QUIET)
 if(mathlib_FOUND)
 else()
-#  FetchContent_Declare(
-#    mathlib
-#    URL https://github.com/lebarsfa/mathlib/archive/refs/heads/master.zip
-#  #  URL ${CMAKE_SOURCE_DIR}/../mathlib-master.zip
-#  #  FIND_PACKAGE_ARGS
-#  )
-#  FetchContent_MakeAvailable(mathlib)
-#  # Adds mathlib::ultim
+  FetchContent_Declare(
+    mathlib
+    URL https://github.com/lebarsfa/mathlib/archive/refs/heads/master.zip
+  #  URL ${CMAKE_SOURCE_DIR}/../mathlib-master.zip
+  #  FIND_PACKAGE_ARGS
+  )
+  FetchContent_MakeAvailable(mathlib)
+  # Adds mathlib::ultim
 endif()
 
 if(MSVC)
@@ -148,13 +148,17 @@ write_basic_package_version_file(
     VERSION ${PACKAGE_VERSION}
     COMPATIBILITY AnyNewerVersion
     )
-	
+  
+# Inspired from https://github.com/fmtlib/fmt/blob/7d4662f7ab39f70107b6e8899bcc4076fe947a39/CMakeLists.txt
+export(TARGETS gaol NAMESPACE gaol::
+        FILE gaolTargets.cmake)
+
 install(EXPORT gaolTargets
-        FILE gaolTargets.cmake
+        #FILE gaolTargets.cmake
         NAMESPACE gaol::
         DESTINATION share/cmake/gaol
          )
-		 
+
 configure_file(gaolConfig.cmake.in gaolConfig.cmake @ONLY)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/gaolConfig.cmake"
               "${CMAKE_CURRENT_BINARY_DIR}/gaolConfigVersion.cmake"

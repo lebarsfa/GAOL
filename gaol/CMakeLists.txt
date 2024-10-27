@@ -27,13 +27,19 @@ s_nextafter.c
 ${HEADER_LIST}
 ${OTHER_LIST})
 
+# Inspired from https://unclejimbo.github.io/2018/06/08/Modern-CMake-for-Library-Developers/
+add_library(gaol::gaol ALIAS gaol)
+
 # We need this directory, and users of our library will need it too
 #target_include_directories(gaol PUBLIC ../include)
+# Inspired from https://unclejimbo.github.io/2018/06/08/Modern-CMake-for-Library-Developers/
 target_include_directories(gaol 
 	PUBLIC
-        $<INSTALL_INTERFACE:include>
-	PRIVATE
-		.. ${unistd_msvc_SOURCE_DIR}
+		$<INSTALL_INTERFACE:include>
+		"$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>"
+		"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>"
+		"$<BUILD_INTERFACE:${unistd_msvc_SOURCE_DIR}>"
+		"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
 )
 
 # This depends on (header only) boost

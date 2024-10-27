@@ -52,11 +52,16 @@ target_link_libraries(gaol PUBLIC mathlib::ultim)
 
 # See https://github.com/friendlyanon/cxx-static-shared-example
 include(GenerateExportHeader)
-generate_export_header(
-    gaol
-    BASE_NAME gaol
-    EXPORT_FILE_NAME gaol_configuration.h # Not used a.t.m.
-)
+#generate_export_header(
+#    gaol
+#    BASE_NAME gaol
+#    EXPORT_FILE_NAME gaol_configuration.h # To check...
+#)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/gaol_double_op_apmathlib.h ${PROJECT_BINARY_DIR}/gaol/gaol_double_op.h COPYONLY) # To check...
+file(READ ${CMAKE_CURRENT_SOURCE_DIR}/gaol_config_mingw.h gaol_config_mingw_content)
+file(READ ${CMAKE_CURRENT_SOURCE_DIR}/gaol_version_mingw.h gaol_version_mingw_content)
+# Concatenate the contents and write to the output file
+file(WRITE ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "${gaol_config_mingw_content}${gaol_version_mingw_content}")
 
 if(NOT BUILD_SHARED_LIBS)
   target_compile_definitions(gaol PUBLIC gaol_STATIC_DEFINE)

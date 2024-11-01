@@ -60,7 +60,7 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/gaol_double_op_apmathlib.h ${PROJECT_
 file(READ ${CMAKE_CURRENT_SOURCE_DIR}/gaol_config_mingw.h gaol_config_mingw_content)
 file(READ ${CMAKE_CURRENT_SOURCE_DIR}/gaol_version_mingw.h gaol_version_mingw_content)
 # Concatenate the contents and write to the output file
-file(WRITE ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "${gaol_config_mingw_content}${gaol_version_mingw_content}")
+file(WRITE ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "${gaol_config_mingw_content}${gaol_version_mingw_content}") # Temporary...
 
 if(NOT BUILD_SHARED_LIBS)
   target_compile_definitions(gaol PUBLIC gaol_STATIC_DEFINE)
@@ -76,6 +76,25 @@ endif()
 
 
 # TO CHECK DEFAULTS DEPENDING ON THE COMPILER, ALSO THE .CMAKE...
+
+# TODO: project version defines...
+
+include(CheckTypeSize)
+
+check_type_size("int" SIZEOF_INT)
+if(SIZEOF_INT)
+  add_definitions(-DSIZEOF_INT ${SIZEOF_INT}) # Temporary...
+endif()
+
+check_type_size("long" SIZEOF_LONG)
+if(SIZEOF_LONG)
+  add_definitions(-DSIZEOF_LONG ${SIZEOF_LONG}) # Temporary...
+endif()
+
+check_type_size("long long int" SIZEOF_LONG_LONG_INT)
+if(SIZEOF_LONG_LONG_INT)
+  add_definitions(-DSIZEOF_LONG_LONG_INT ${SIZEOF_LONG_LONG_INT}) # Temporary...
+endif()
 
 include(CheckCXXCompilerFlag)
 

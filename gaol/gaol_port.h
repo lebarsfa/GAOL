@@ -145,13 +145,13 @@ namespace gaol {
 
 #if SIZEOF_INT==4
 #  define INT_FOR_DOUBLE int
-#elif SIZEOF_LONG_INT==4
+#elif SIZEOF_LONG==4
 #  define INT_FOR_DOUBLE long
 #else
 #  error "Cannot find a 32 bits integer type!"
 #endif
 
-#if SIZEOF_LONG_INT==8
+#if SIZEOF_LONG==8
 #  define ULONGLONGINT unsigned long int
 #elif SIZEOF_LONG_LONG_INT==8
 #  define ULONGLONGINT unsigned long long int

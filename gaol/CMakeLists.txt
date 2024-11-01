@@ -6,11 +6,7 @@
 # Optionally glob, but only for CMake 3.12 or later:
 # file(GLOB HEADER_LIST CONFIGURE_DEPENDS "${gaol_SOURCE_DIR}/include/modern/*.hpp")
 #set(HEADER_LIST "${gaol_SOURCE_DIR}/include/modern/lib.hpp")
-file(GLOB HEADER_LIST CONFIGURE_DEPENDS "${gaol_SOURCE_DIR}/gaol/*.h" "${gaol_SOURCE_DIR}/gaol/*.hpp")
-file(GLOB OTHER_LIST CONFIGURE_DEPENDS "${gaol_SOURCE_DIR}/gaol/*.ypp")
-
-# Make an automatic library - will be static or dynamic based on user setting
-add_library(gaol 
+set(SOURCE_LIST 
 gaol_common.cpp
 gaol_exact.c
 gaol_exceptions.cpp
@@ -23,9 +19,12 @@ gaol_interval_parser.cpp
 gaol_parser.cpp
 gaol_port.cpp
 gaol_profile.cpp
-s_nextafter.c
-${HEADER_LIST}
-${OTHER_LIST})
+s_nextafter.c)
+file(GLOB HEADER_LIST CONFIGURE_DEPENDS "${gaol_SOURCE_DIR}/gaol/*.h" "${gaol_SOURCE_DIR}/gaol/*.hpp")
+file(GLOB OTHER_LIST CONFIGURE_DEPENDS "${gaol_SOURCE_DIR}/gaol/*.ypp")
+
+# Make an automatic library - will be static or dynamic based on user setting
+add_library(gaol ${SOURCE_LIST} ${HEADER_LIST} ${OTHER_LIST})
 
 # Inspired from https://unclejimbo.github.io/2018/06/08/Modern-CMake-for-Library-Developers/
 add_library(gaol::gaol ALIAS gaol)
@@ -35,7 +34,7 @@ add_library(gaol::gaol ALIAS gaol)
 # Inspired from https://unclejimbo.github.io/2018/06/08/Modern-CMake-for-Library-Developers/
 target_include_directories(gaol 
 	PUBLIC
-		$<INSTALL_INTERFACE:include>
+		"$<INSTALL_INTERFACE:include>"
 		"$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>"
 		"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>"
 		"$<BUILD_INTERFACE:${unistd_msvc_SOURCE_DIR}>"
@@ -80,13 +79,17 @@ endif()
 
 include(CheckCXXCompilerFlag)
 
+option(USE_CPP11 "Use C++ 11" ON)
+if(USE_CPP11)
+  target_compile_features(gaol PUBLIC cxx_std_11)
+endif()
+
 #option(USE_ENABLE_SIMD "Use SIMD instructions to implement arithmetic operations" ON)
 option(USE_ENABLE_SIMD "Use SIMD instructions to implement arithmetic operations" OFF)
 if(USE_ENABLE_SIMD)
   check_cxx_compiler_flag("--enable-simd" COMPILER_SUPPORTS_ENABLE_SIMD)
   if(COMPILER_SUPPORTS_ENABLE_SIMD)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --enable-simd")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --enable-simd")
+    target_compile_options(gaol PUBLIC "--enable-simd")
   endif()
 endif()
 
@@ -96,19 +99,16 @@ if(USE_SSE2)
   add_definitions(-DUSING_SSE2_INSTRUCTIONS)
   check_cxx_compiler_flag("/arch:SSE2" COMPILER_SUPPORTS_ARCH_SSE2)
   if(COMPILER_SUPPORTS_ARCH_SSE2)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /arch:SSE2")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:SSE2")
+    target_compile_options(gaol PUBLIC "/arch:SSE2")
   endif()
   check_cxx_compiler_flag("-xP" COMPILER_SUPPORTS_XP)
   check_cxx_compiler_flag("-mtune=pentium4" COMPILER_SUPPORTS_MTUNE_PENTIUM4)
   if((COMPILER_SUPPORTS_XP) AND (COMPILER_SUPPORTS_MTUNE_PENTIUM4))
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -xP -mtune=pentium4")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -xP -mtune=pentium4")
+    target_compile_options(gaol PUBLIC "-xP -mtune=pentium4")
   endif()
   check_cxx_compiler_flag("-msse2" COMPILER_SUPPORTS_MSSE2)
   if(COMPILER_SUPPORTS_MSSE2)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse2")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse2")
+    target_compile_options(gaol PUBLIC "-msse2")
   endif()
 endif()
 
@@ -118,13 +118,11 @@ if(USE_SSE3)
   add_definitions(-DUSING_SSE3_INSTRUCTIONS)
   check_cxx_compiler_flag("-msse3" COMPILER_SUPPORTS_MSSE3)
   if(COMPILER_SUPPORTS_MSSE3)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -msse3")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse3")
+    target_compile_options(gaol PUBLIC "-msse3")
   endif()
 endif()
 
-#option(USE_GAOL_VERBOSE_MODE "Use verbose mode" ON)
-option(USE_GAOL_VERBOSE_MODE "Use verbose mode" OFF)
+option(USE_GAOL_VERBOSE_MODE "Use verbose mode" ON)
 if(USE_GAOL_VERBOSE_MODE)
   add_definitions(-DGAOL_VERBOSE_MODE)
 endif()
@@ -132,18 +130,41 @@ endif()
 option(USE_GAOL_DEBUGGING "Use debugging facilities" OFF)
 if(USE_GAOL_DEBUGGING)
   add_definitions(-DGAOL_DEBUGGING)
+  #-g -ansi -Weffc++ -pedantic
+  #check_cxx_compiler_flag("-Weffc++" COMPILER_SUPPORTS_WEFFCPP)
+  #if(COMPILER_SUPPORTS_WEFFCPP)
+  #  target_compile_options(gaol PUBLIC "-Weffc++")
+  #endif()
 endif()
 
-#option(USE_GAOL_PRESERVE_ROUNDING "Transparently manipulates the FPU control flags" ON)
-option(USE_GAOL_PRESERVE_ROUNDING "Transparently manipulates the FPU control flags" OFF)
+option(USE_GAOL_PRESERVE_ROUNDING "Transparently manipulates the FPU control flags" ON)
 if(USE_GAOL_PRESERVE_ROUNDING)
   add_definitions(-DGAOL_PRESERVE_ROUNDING)
 endif()
 
-#option(USE_GAOL_EXCEPTIONS_ENABLED "Raise exceptions to signal errors" ON)
-option(USE_GAOL_EXCEPTIONS_ENABLED "Raise exceptions to signal errors" OFF)
+option(USE_GAOL_SET_RELATIONS "Set relations" OFF)
+if(USE_GAOL_SET_RELATIONS)
+  add_definitions(-DGAOL_SET_RELATIONS)
+endif()
+
+option(USE_GAOL_CERTAINLY_RELATIONS "Certainly relations" ON)
+if(USE_GAOL_CERTAINLY_RELATIONS)
+  add_definitions(-DGAOL_CERTAINLY_RELATIONS)
+endif()
+
+option(USE_GAOL_POSSIBLY_RELATIONS "Possibly relations" OFF)
+if(USE_GAOL_POSSIBLY_RELATIONS)
+  add_definitions(-DGAOL_POSSIBLY_RELATIONS)
+endif()
+
+option(USE_GAOL_EXCEPTIONS_ENABLED "Raise exceptions to signal errors" ON)
 if(USE_GAOL_EXCEPTIONS_ENABLED)
   add_definitions(-DGAOL_EXCEPTIONS_ENABLED)
+endif()
+
+option(USE_GAOL_USING_ASM "Allow ASM support" ON)
+if(USE_GAOL_USING_ASM)
+  add_definitions(-DGAOL_USING_ASM)
 endif()
 
 
@@ -153,3 +174,7 @@ endif()
 #  TREE "${PROJECT_SOURCE_DIR}/include"
 #  PREFIX "Header Files"
 #  FILES ${HEADER_LIST})
+source_group(
+  TREE "${PROJECT_SOURCE_DIR}/gaol"
+  PREFIX "Other Files"
+  FILES ${OTHER_LIST})

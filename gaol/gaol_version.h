@@ -32,9 +32,17 @@
 #define __gaol_version_h__
 
 #if defined (_MSC_VER) /* Windows / Visual C++ */
-# include "gaol/gaol_version_msvc.h"
+# ifdef DISABLE_GAOL_CONFIGURATION_H
+#  include "gaol/gaol_version_msvc.h"
+# else
+#  include "gaol/gaol_configuration.h"
+# endif
 //#elif defined (__MINGW32__) /* MinGW */
-//# include "gaol/gaol_version_mingw.h"
+//# ifdef DISABLE_GAOL_CONFIGURATION_H
+//#  include "gaol/gaol_version_mingw.h"
+//# else
+//#  include "gaol/gaol_configuration.h"
+//# endif
 #else /* Presumably Linux/gcc/autoconf */
 # include "gaol/gaol_configuration.h"
 #endif

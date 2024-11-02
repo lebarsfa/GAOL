@@ -34,6 +34,9 @@
 #include "gaol/gaol_version.h"
 #include "gaol/gaol_common.h"
 #include "gaol/gaol_fpu.h"
+#ifndef DISABLE_GAOL_CONFIGURATION_H
+# include "gaol/gaol_double_op.h"
+#endif
 #include "gaol/gaol_profile.h"
 #include "gaol/gaol_interval.h"
 #include "gaol/gaol_exceptions.h"

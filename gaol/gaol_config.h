@@ -49,14 +49,22 @@
 #   endif
 # endif
 # define INLINE inline
-# include "gaol/gaol_config_msvc.h"
+# ifdef DISABLE_GAOL_CONFIGURATION_H
+#  include "gaol/gaol_config_msvc.h"
+# else
+#  include "gaol/gaol_configuration.h"
+#endif
 
 //#elif defined (__MINGW32__)
 //
 //# define GAOL_ERRNO errno
 //# undef PACKAGE
 //# undef VERSION
-//# include "gaol/gaol_config_mingw.h"
+//# ifdef DISABLE_GAOL_CONFIGURATION_H
+//#  include "gaol/gaol_config_mingw.h"
+//# else
+//#  include "gaol/gaol_configuration.h"
+//# endif
 //# ifndef __GAOL_PUBLIC__
 //#  if defined (HAVE_VISIBILITY_OPTIONS)
 //#     define __GAOL_PUBLIC__ __attribute__ ((visibility("default")))

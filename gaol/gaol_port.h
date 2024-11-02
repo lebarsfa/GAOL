@@ -127,12 +127,12 @@
 
 namespace gaol {
 
-#if HAVE_ROUNDING_MATH_OPTION
+#if HAVE_FROUNDING_MATH_OPTION
   INLINE double f_negate_simple(double x) { return -x; }
 #  define gaol_opposite(x) f_negate_simple(x)
 #else
 #  define gaol_opposite(x) f_negate(x)
-#endif // HAVE_ROUNDING_MATH_OPTION
+#endif // HAVE_FROUNDING_MATH_OPTION
 
   /*!
     \brief Sign of double

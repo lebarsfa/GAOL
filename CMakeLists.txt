@@ -29,7 +29,9 @@ include(FetchContent)
 
 find_package(mathlib QUIET)
 if(mathlib_FOUND)
+  message(STATUS "Found mathlib version ${mathlib_VERSION} in ${mathlib_DIR}")
 else()
+  message(STATUS "Attempt to install mathlib automatically...")
   FetchContent_Declare(
     mathlib
     URL https://github.com/lebarsfa/mathlib/archive/refs/heads/master.zip

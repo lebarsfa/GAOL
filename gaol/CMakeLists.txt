@@ -67,8 +67,10 @@ endif()
 
 include(CheckCXXCompilerFlag)
 include(CheckTypeSize)
+include(CheckIncludeFile)
 include(CheckIncludeFiles)
 include(CheckFunctionExists)
+include(CheckCSourceCompiles)
 include(CheckCSourceRuns)
 
 option(GAOL_ENABLE_RELATIONS_CERTAINLY "Relation symbols should stand for \"certainly relations\"" ON)
@@ -81,17 +83,20 @@ endif()
 
 option(GAOL_ENABLE_DEBUG "Compile gaol with debugging info" OFF)
 if(GAOL_ENABLE_DEBUG)
-  check_cxx_compiler_flag("-ansi" COMPILER_SUPPORTS_ANSI)
-  if(COMPILER_SUPPORTS_ANSI)
-    target_compile_options(gaol PUBLIC -ansi)
+  check_cxx_compiler_flag("-ansi" CXX_COMPILER_SUPPORTS_ANSI)
+  if(CXX_COMPILER_SUPPORTS_ANSI)
+    #target_compile_options(gaol PUBLIC -ansi)
+    add_compile_options(-ansi)
   endif()
-  check_cxx_compiler_flag("-Weffc++" COMPILER_SUPPORTS_WEFFCPP)
-  if(COMPILER_SUPPORTS_WEFFCPP)
-    target_compile_options(gaol PUBLIC -Weffc++)
+  check_cxx_compiler_flag("-Weffc++" CXX_COMPILER_SUPPORTS_WEFFCPP)
+  if(CXX_COMPILER_SUPPORTS_WEFFCPP)
+    #target_compile_options(gaol PUBLIC -Weffc++)
+    add_compile_options(-Weffc++)
   endif()
-  check_cxx_compiler_flag("-pedantic" COMPILER_SUPPORTS_PEDANTIC)
-  if(COMPILER_SUPPORTS_PEDANTIC)
-    target_compile_options(gaol PUBLIC -pedantic)
+  check_cxx_compiler_flag("-pedantic" CXX_COMPILER_SUPPORTS_PEDANTIC)
+  if(CXX_COMPILER_SUPPORTS_PEDANTIC)
+    #target_compile_options(gaol PUBLIC -pedantic)
+    add_compile_options(-pedantic)
   endif()
   file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* define this if you want debugging facilities */
@@ -163,10 +168,13 @@ if(GAOL_ENABLE_VERBOSE_MODE)
 ")
 endif()
 
+# check_c_source_runs() cause issues when cross-compiling...
+
 # Check for sys/resource.h and getrusage function
 check_include_files("sys/resource.h" HAVE_SYS_RESOURCE_H)
 if(HAVE_SYS_RESOURCE_H)
-    check_c_source_runs("
+    #check_c_source_runs("
+    check_c_source_compiles("
         #include <sys/resource.h>
         int main() {
             struct rusage usage;
@@ -175,19 +183,20 @@ if(HAVE_SYS_RESOURCE_H)
         }" HAVE_GETRUSAGE_IN_HEADER)
 endif()
 
+# Determined in gaol_config.h...
 # If sys/resource.h is not found, check for time.h and clock function
-if(NOT HAVE_SYS_RESOURCE_H)
-    check_include_files("time.h" HAVE_TIME_H)
-    if(HAVE_TIME_H)
-        check_c_source_runs("
-            #include <time.h>
-            int main() {
-                clock_t time;
-                time = clock();
-                return 0;
-            }" HAVE_CLOCK_IN_HEADER)
-    endif()
-endif()
+#if(NOT HAVE_SYS_RESOURCE_H)
+#    check_include_files("time.h" HAVE_TIME_H)
+#    if(HAVE_TIME_H)
+#        check_c_source_runs("
+#            #include <time.h>
+#            int main() {
+#                clock_t time;
+#                time = clock();
+#                return 0;
+#            }" HAVE_CLOCK_IN_HEADER)
+#    endif()
+#endif()
 
 if(HAVE_GETRUSAGE_IN_HEADER)
   file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
@@ -201,17 +210,18 @@ else()
 ")
 endif()
 
-if(HAVE_CLOCK_IN_HEADER)
-  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
-/* Define this to 1 if function clock() is declared in time.h */
-#define CLOCK_IN_HEADER 1
-")
-else()
-  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
-/* Define this to 1 if function clock() is declared in time.h */
-#define CLOCK_IN_HEADER 0
-")
-endif()
+# Determined in gaol_config.h...
+#if(HAVE_CLOCK_IN_HEADER)
+#  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+#/* Define this to 1 if function clock() is declared in time.h */
+##define CLOCK_IN_HEADER 1
+#")
+#else()
+#  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+#/* Define this to 1 if function clock() is declared in time.h */
+##define CLOCK_IN_HEADER 0
+#")
+#endif()
 
 check_include_files("cassert" HAVE_CASSERT_H)
 if(HAVE_CASSERT_H)
@@ -244,22 +254,27 @@ endif()
 
 option(GAOL_ENABLE_OPTIMIZE "Compile gaol with full optimization" ON)
 if(GAOL_ENABLE_OPTIMIZE)
-  check_cxx_compiler_flag("-funroll-loops" COMPILER_SUPPORTS_FUNROLL_LOOPS)
-  if(COMPILER_SUPPORTS_FUNROLL_LOOPS)
-    target_compile_options(gaol PUBLIC -funroll-loops)
+  check_cxx_compiler_flag("-funroll-loops" CXX_COMPILER_SUPPORTS_FUNROLL_LOOPS)
+  if(CXX_COMPILER_SUPPORTS_FUNROLL_LOOPS)
+    #target_compile_options(gaol PUBLIC -funroll-loops)
+    add_compile_options(-funroll-loops)
   endif()
-  check_cxx_compiler_flag("-fomit-frame-pointer" COMPILER_SUPPORTS_FOMIT_FRAME_POINTER)
-  if(COMPILER_SUPPORTS_FOMIT_FRAME_POINTER)
-    target_compile_options(gaol PUBLIC -fomit-frame-pointer)
+  check_cxx_compiler_flag("-fomit-frame-pointer" CXX_COMPILER_SUPPORTS_FOMIT_FRAME_POINTER)
+  if(CXX_COMPILER_SUPPORTS_FOMIT_FRAME_POINTER)
+    #target_compile_options(gaol PUBLIC -fomit-frame-pointer)
+    add_compile_options(-fomit-frame-pointer)
   endif()
-  check_cxx_compiler_flag("-fexpensive-optimizations" COMPILER_SUPPORTS_FEXPENSIVE_OPTIMIZATIONS)
-  if(COMPILER_SUPPORTS_FEXPENSIVE_OPTIMIZATIONS)
-    target_compile_options(gaol PUBLIC -fexpensive-optimizations)
+  check_cxx_compiler_flag("-fexpensive-optimizations" CXX_COMPILER_SUPPORTS_FEXPENSIVE_OPTIMIZATIONS)
+  if(CXX_COMPILER_SUPPORTS_FEXPENSIVE_OPTIMIZATIONS)
+    #target_compile_options(gaol PUBLIC -fexpensive-optimizations)
+    add_compile_options(-fexpensive-optimizations)
   endif()
-  check_cxx_compiler_flag("-fvisibility-inlines-hidden" COMPILER_SUPPORTS_FVISIBILITY_INLINES_HIDDEN)
-  check_cxx_compiler_flag("-fvisibility=hidden" COMPILER_SUPPORTS_FVISIBILITY_HIDDEN)
-  if((COMPILER_SUPPORTS_FVISIBILITY_INLINES_HIDDEN) AND (COMPILER_SUPPORTS_FVISIBILITY_HIDDEN))
-    target_compile_options(gaol PUBLIC -fvisibility-inlines-hidden -fvisibility=hidden)
+  check_cxx_compiler_flag("-fvisibility-inlines-hidden" CXX_COMPILER_SUPPORTS_FVISIBILITY_INLINES_HIDDEN)
+  check_cxx_compiler_flag("-fvisibility=hidden" CXX_COMPILER_SUPPORTS_FVISIBILITY_HIDDEN)
+  if((CXX_COMPILER_SUPPORTS_FVISIBILITY_INLINES_HIDDEN) AND (CXX_COMPILER_SUPPORTS_FVISIBILITY_HIDDEN))
+    #target_compile_options(gaol PUBLIC -fvisibility-inlines-hidden -fvisibility=hidden)
+    add_compile_options(-fvisibility-inlines-hidden)
+    add_compile_options(-fvisibility=hidden)
     file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
 #/* Define this to 1 if the compiler supports the \"-fvisibility\" option */
 #define HAVE_VISIBILITY_OPTIONS 1
@@ -291,40 +306,50 @@ if(SIZEOF_LONG_LONG_INT)
 ")
 endif()
 
-if(WIN32)
-  option(GAOL_ENABLE_SIMD "Use SIMD instructions to implement arithmetic operations" OFF)
+check_include_files("xmmintrin.h" HAVE_XMMINTRIN_H)
+if(HAVE_XMMINTRIN_H)
+  if(WIN32)
+    option(GAOL_ENABLE_SIMD "Use SIMD instructions to implement arithmetic operations" OFF)
+  else()
+    option(GAOL_ENABLE_SIMD "Use SIMD instructions to implement arithmetic operations" ON)
+  endif()
 else()
-  option(GAOL_ENABLE_SIMD "Use SIMD instructions to implement arithmetic operations" ON)
+  option(GAOL_ENABLE_SIMD "Use SIMD instructions to implement arithmetic operations" OFF)
 endif()
 if(GAOL_ENABLE_SIMD)
-  check_cxx_compiler_flag("/arch:SSE2" COMPILER_SUPPORTS_ARCH_SSE2)
-  if(COMPILER_SUPPORTS_ARCH_SSE2)
-    target_compile_options(gaol PUBLIC /arch:SSE2)
+  check_cxx_compiler_flag("/arch:SSE2" CXX_COMPILER_SUPPORTS_ARCH_SSE2)
+  if(CXX_COMPILER_SUPPORTS_ARCH_SSE2)
+    #target_compile_options(gaol PUBLIC /arch:SSE2)
+    add_compile_options(/arch:SSE2)
     file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* Define this to 1 if SSE2 instructions are to be used */
 #define USING_SSE2_INSTRUCTIONS 1
 ")
   endif()
-  check_cxx_compiler_flag("-xP" COMPILER_SUPPORTS_XP)
-  check_cxx_compiler_flag("-mtune=pentium4" COMPILER_SUPPORTS_MTUNE_PENTIUM4)
-  if((COMPILER_SUPPORTS_XP) AND (COMPILER_SUPPORTS_MTUNE_PENTIUM4))
-    target_compile_options(gaol PUBLIC -xP -mtune=pentium4)
+  check_cxx_compiler_flag("-xP" CXX_COMPILER_SUPPORTS_XP)
+  check_cxx_compiler_flag("-mtune=pentium4" CXX_COMPILER_SUPPORTS_MTUNE_PENTIUM4)
+  if((CXX_COMPILER_SUPPORTS_XP) AND (CXX_COMPILER_SUPPORTS_MTUNE_PENTIUM4))
+    #target_compile_options(gaol PUBLIC -xP -mtune=pentium4)
+    add_compile_options(-xP)
+    add_compile_options(-mtune=pentium4)
     file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* Define this to 1 if SSE2 instructions are to be used */
 #define USING_SSE2_INSTRUCTIONS 1
 ")
   endif()
-  check_cxx_compiler_flag("-msse2" COMPILER_SUPPORTS_MSSE2)
-  if(COMPILER_SUPPORTS_MSSE2)
-    target_compile_options(gaol PUBLIC -msse2)
+  check_cxx_compiler_flag("-msse2" CXX_COMPILER_SUPPORTS_MSSE2)
+  if(CXX_COMPILER_SUPPORTS_MSSE2)
+    #target_compile_options(gaol PUBLIC -msse2)
+    add_compile_options(-msse2)
     file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* Define this to 1 if SSE2 instructions are to be used */
 #define USING_SSE2_INSTRUCTIONS 1
 ")
   endif()
-  check_cxx_compiler_flag("-msse3" COMPILER_SUPPORTS_MSSE3)
-  if(COMPILER_SUPPORTS_MSSE3)
-    target_compile_options(gaol PUBLIC -msse3)
+  check_cxx_compiler_flag("-msse3" CXX_COMPILER_SUPPORTS_MSSE3)
+  if(CXX_COMPILER_SUPPORTS_MSSE3)
+    #target_compile_options(gaol PUBLIC -msse3)
+    add_compile_options(-msse3)
     file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* Define this to 1 if SSE3 instructions are to be used */
 #define USING_SSE3_INSTRUCTIONS 1

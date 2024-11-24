@@ -116,7 +116,7 @@
 #else
 // Does not seem to exist in C++...
 // See https://stackoverflow.com/questions/36218367/does-fenv-access-pragma-exist-in-c11-and-higher
-//#   pragma STDC FENV_ACCESS on
+//#   pragma STDC FENV_ACCESS ON
 #endif
 
 // See https://devblogs.microsoft.com/cppblog/c99-library-support-in-visual-studio-2013/ 

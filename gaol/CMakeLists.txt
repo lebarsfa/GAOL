@@ -8,7 +8,7 @@
 #set(HEADER_LIST "${gaol_SOURCE_DIR}/include/modern/lib.hpp")
 set(SOURCE_LIST 
 gaol_common.cpp
-gaol_exact.c # No function defintions in the file...
+gaol_exact.c # No function definitions in the file...
 gaol_exceptions.cpp
 gaol_expression.cpp
 gaol_init_cleanup.cpp

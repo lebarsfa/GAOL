@@ -26,9 +26,6 @@ file(GLOB OTHER_LIST CONFIGURE_DEPENDS "${gaol_SOURCE_DIR}/gaol/*.ypp")
 # Make an automatic library - will be static or dynamic based on user setting
 add_library(gaol ${SOURCE_LIST} ${HEADER_LIST} ${OTHER_LIST})
 
-# Inspired from https://unclejimbo.github.io/2018/06/08/Modern-CMake-for-Library-Developers/
-add_library(gaol::gaol ALIAS gaol)
-
 # We need this directory, and users of our library will need it too
 #target_include_directories(gaol PUBLIC ../include)
 # Inspired from https://unclejimbo.github.io/2018/06/08/Modern-CMake-for-Library-Developers/
@@ -365,6 +362,51 @@ file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
 file(READ ${CMAKE_CURRENT_SOURCE_DIR}/gaol_version_mingw.h gaol_version_mingw_content)
 file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "${gaol_version_mingw_content}") # To check...
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/gaol_double_op_apmathlib.h ${PROJECT_BINARY_DIR}/gaol/gaol_double_op.h COPYONLY) # To check...
+
+if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+  install(FILES 
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_allocator.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_assert.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_common.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_config.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_config_mingw.h # To check...
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_config_msvc.h # To check...
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_double_op_apmathlib.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_double_op_crlibm.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_double_op_m.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_eval_stack.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_exact.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_exceptions.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_expression.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_expr_eval.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_expr_visitor.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_flags.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_fpu.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_fpu_fenv.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_init_cleanup.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_interval.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_interval2f.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_intervalf.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_interval_fpu.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_interval_parser.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_interval_sse.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_limits.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_parameters.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_parser.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_port.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_profile.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_version.h # To check...
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_version_mingw.h # To check...
+  ${CMAKE_CURRENT_SOURCE_DIR}/gaol_version_msvc.h # To check...
+  ${CMAKE_CURRENT_SOURCE_DIR}/sysdeps/gaol_exact_c99.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/sysdeps/gaol_exact_msvc.h
+  ${PROJECT_BINARY_DIR}/gaol/gaol_double_op.h # To check...
+  ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h # To check...
+      DESTINATION include/gaol
+  )
+endif()
 
 # IDEs should put the headers in a nice place
 #source_group(

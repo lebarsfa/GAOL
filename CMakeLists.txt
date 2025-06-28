@@ -77,8 +77,8 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
       )
     
   # Inspired from https://github.com/fmtlib/fmt/blob/7d4662f7ab39f70107b6e8899bcc4076fe947a39/CMakeLists.txt
-  export(TARGETS gaol NAMESPACE gaol::
-          FILE gaolTargets.cmake)
+  #export(TARGETS gaol NAMESPACE gaol::
+  #        FILE gaolTargets.cmake)
   
   install(EXPORT gaolTargets
           #FILE gaolTargets.cmake

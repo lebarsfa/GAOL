@@ -61,7 +61,7 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 
   # From https://gitlab.com/CLIUtils/modern-cmake/-/blob/b47192867e86e5f00f70ec860638a28473edc8bf/chapters/install/installing.md
   # and https://unclejimbo.github.io/2018/06/08/Modern-CMake-for-Library-Developers/
-  install(TARGETS gaol
+  install(TARGETS gaol ultim #####################################
           EXPORT gaolTargets
           LIBRARY DESTINATION lib
           ARCHIVE DESTINATION lib

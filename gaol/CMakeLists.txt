@@ -27,7 +27,7 @@ file(GLOB OTHER_LIST CONFIGURE_DEPENDS "${gaol_SOURCE_DIR}/gaol/*.ypp")
 add_library(gaol ${SOURCE_LIST} ${HEADER_LIST} ${OTHER_LIST})
 
 # Inspired from https://unclejimbo.github.io/2018/06/08/Modern-CMake-for-Library-Developers/
-add_library(gaol::gaol ALIAS gaol)
+#add_library(gaol::gaol ALIAS gaol)
 
 # We need this directory, and users of our library will need it too
 #target_include_directories(gaol PUBLIC ../include)

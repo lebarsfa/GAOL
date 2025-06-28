@@ -56,35 +56,43 @@ endif()
 # The compiled library code is here
 add_subdirectory(gaol)
 
-# From https://gitlab.com/CLIUtils/modern-cmake/-/blob/b47192867e86e5f00f70ec860638a28473edc8bf/chapters/install/installing.md
-# and https://unclejimbo.github.io/2018/06/08/Modern-CMake-for-Library-Developers/
-install(TARGETS gaol
-        EXPORT gaolTargets
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib
-#        RUNTIME DESTINATION bin
-#        INCLUDES DESTINATION include
-        )
+if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+  # Only at top-level do we generate install() and install(EXPORT)
 
-include(CMakePackageConfigHelpers)
-write_basic_package_version_file(
-    gaolConfigVersion.cmake
-    #VERSION ${PACKAGE_VERSION}
-    COMPATIBILITY AnyNewerVersion
-    )
+  # From https://gitlab.com/CLIUtils/modern-cmake/-/blob/b47192867e86e5f00f70ec860638a28473edc8bf/chapters/install/installing.md
+  # and https://unclejimbo.github.io/2018/06/08/Modern-CMake-for-Library-Developers/
+  install(TARGETS gaol
+          EXPORT gaolTargets
+          LIBRARY DESTINATION lib
+          ARCHIVE DESTINATION lib
+  #        RUNTIME DESTINATION bin
+  #        INCLUDES DESTINATION include
+          )
   
-# Inspired from https://github.com/fmtlib/fmt/blob/7d4662f7ab39f70107b6e8899bcc4076fe947a39/CMakeLists.txt
-export(TARGETS gaol NAMESPACE gaol::
-        FILE gaolTargets.cmake)
+  include(CMakePackageConfigHelpers)
+  write_basic_package_version_file(
+      gaolConfigVersion.cmake
+      #VERSION ${PACKAGE_VERSION}
+      COMPATIBILITY AnyNewerVersion
+      )
+    
+  # Inspired from https://github.com/fmtlib/fmt/blob/7d4662f7ab39f70107b6e8899bcc4076fe947a39/CMakeLists.txt
+  export(TARGETS gaol NAMESPACE gaol::
+          FILE gaolTargets.cmake)
+  
+  install(EXPORT gaolTargets
+          #FILE gaolTargets.cmake
+          NAMESPACE gaol::
+          DESTINATION share/cmake/gaol
+           )
+  
+  configure_file(gaolConfig.cmake.in gaolConfig.cmake @ONLY)
+  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/gaolConfig.cmake"
+                "${CMAKE_CURRENT_BINARY_DIR}/gaolConfigVersion.cmake"
+          DESTINATION share/cmake/gaol
+          )
+else()
+  # Sub-project: give users namespace aliases
 
-install(EXPORT gaolTargets
-        #FILE gaolTargets.cmake
-        NAMESPACE gaol::
-        DESTINATION share/cmake/gaol
-         )
-
-configure_file(gaolConfig.cmake.in gaolConfig.cmake @ONLY)
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/gaolConfig.cmake"
-              "${CMAKE_CURRENT_BINARY_DIR}/gaolConfigVersion.cmake"
-        DESTINATION share/cmake/gaol
-        )
+  add_library(gaol::gaol ALIAS gaol)
+endif()

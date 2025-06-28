@@ -8,7 +8,7 @@ include(CheckCXXCompilerFlag)
 #find_dependency(MYDEP REQUIRED)
 
 # Any extra setup
-find_package(mathlib REQUIRED)
+find_dependency(mathlib REQUIRED)
 if(mathlib_FOUND)
   message(STATUS "Found mathlib version ${mathlib_VERSION} in ${mathlib_DIR}")
 endif()

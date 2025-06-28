@@ -59,8 +59,11 @@ else()
 endif()
 
 if(MSVC)
-  add_definitions(-D_COMPILING__GAOL_PUBLIC__)
-  add_definitions(-D_MATHLIB_DLL_=extern\ \"C\")
+  target_compile_definitions(gaol
+    PUBLIC
+      _COMPILING__GAOL_PUBLIC__
+      "_MATHLIB_DLL_=extern \"C\""
+  )
 endif()
 
 # TO CHECK DEFAULTS DEPENDING ON THE COMPILER, ALSO THE .CMAKE...
@@ -85,18 +88,15 @@ option(GAOL_ENABLE_DEBUG "Compile gaol with debugging info" OFF)
 if(GAOL_ENABLE_DEBUG)
   check_cxx_compiler_flag("-ansi" CXX_COMPILER_SUPPORTS_ANSI)
   if(CXX_COMPILER_SUPPORTS_ANSI)
-    #target_compile_options(gaol PUBLIC -ansi)
-    add_compile_options(-ansi)
+    target_compile_options(gaol PUBLIC -ansi)
   endif()
   check_cxx_compiler_flag("-Weffc++" CXX_COMPILER_SUPPORTS_WEFFCPP)
   if(CXX_COMPILER_SUPPORTS_WEFFCPP)
-    #target_compile_options(gaol PUBLIC -Weffc++)
-    add_compile_options(-Weffc++)
+    target_compile_options(gaol PUBLIC -Weffc++)
   endif()
   check_cxx_compiler_flag("-pedantic" CXX_COMPILER_SUPPORTS_PEDANTIC)
   if(CXX_COMPILER_SUPPORTS_PEDANTIC)
-    #target_compile_options(gaol PUBLIC -pedantic)
-    add_compile_options(-pedantic)
+    target_compile_options(gaol PUBLIC -pedantic)
   endif()
   file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* define this if you want debugging facilities */
@@ -256,25 +256,20 @@ option(GAOL_ENABLE_OPTIMIZE "Compile gaol with full optimization" ON)
 if(GAOL_ENABLE_OPTIMIZE)
   check_cxx_compiler_flag("-funroll-loops" CXX_COMPILER_SUPPORTS_FUNROLL_LOOPS)
   if(CXX_COMPILER_SUPPORTS_FUNROLL_LOOPS)
-    #target_compile_options(gaol PUBLIC -funroll-loops)
-    add_compile_options(-funroll-loops)
+    target_compile_options(gaol PUBLIC -funroll-loops)
   endif()
   check_cxx_compiler_flag("-fomit-frame-pointer" CXX_COMPILER_SUPPORTS_FOMIT_FRAME_POINTER)
   if(CXX_COMPILER_SUPPORTS_FOMIT_FRAME_POINTER)
-    #target_compile_options(gaol PUBLIC -fomit-frame-pointer)
-    add_compile_options(-fomit-frame-pointer)
+    target_compile_options(gaol PUBLIC -fomit-frame-pointer)
   endif()
   check_cxx_compiler_flag("-fexpensive-optimizations" CXX_COMPILER_SUPPORTS_FEXPENSIVE_OPTIMIZATIONS)
   if(CXX_COMPILER_SUPPORTS_FEXPENSIVE_OPTIMIZATIONS)
-    #target_compile_options(gaol PUBLIC -fexpensive-optimizations)
-    add_compile_options(-fexpensive-optimizations)
+    target_compile_options(gaol PUBLIC -fexpensive-optimizations)
   endif()
   check_cxx_compiler_flag("-fvisibility-inlines-hidden" CXX_COMPILER_SUPPORTS_FVISIBILITY_INLINES_HIDDEN)
   check_cxx_compiler_flag("-fvisibility=hidden" CXX_COMPILER_SUPPORTS_FVISIBILITY_HIDDEN)
   if((CXX_COMPILER_SUPPORTS_FVISIBILITY_INLINES_HIDDEN) AND (CXX_COMPILER_SUPPORTS_FVISIBILITY_HIDDEN))
-    #target_compile_options(gaol PUBLIC -fvisibility-inlines-hidden -fvisibility=hidden)
-    add_compile_options(-fvisibility-inlines-hidden)
-    add_compile_options(-fvisibility=hidden)
+    target_compile_options(gaol PUBLIC -fvisibility-inlines-hidden -fvisibility=hidden)
     file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
 #/* Define this to 1 if the compiler supports the \"-fvisibility\" option */
 #define HAVE_VISIBILITY_OPTIONS 1
@@ -319,8 +314,7 @@ endif()
 if(GAOL_ENABLE_SIMD)
   check_cxx_compiler_flag("/arch:SSE2" CXX_COMPILER_SUPPORTS_ARCH_SSE2)
   if(CXX_COMPILER_SUPPORTS_ARCH_SSE2)
-    #target_compile_options(gaol PUBLIC /arch:SSE2)
-    add_compile_options(/arch:SSE2)
+    target_compile_options(gaol PUBLIC /arch:SSE2)
     file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* Define this to 1 if SSE2 instructions are to be used */
 #define USING_SSE2_INSTRUCTIONS 1
@@ -329,9 +323,7 @@ if(GAOL_ENABLE_SIMD)
   check_cxx_compiler_flag("-xP" CXX_COMPILER_SUPPORTS_XP)
   check_cxx_compiler_flag("-mtune=pentium4" CXX_COMPILER_SUPPORTS_MTUNE_PENTIUM4)
   if((CXX_COMPILER_SUPPORTS_XP) AND (CXX_COMPILER_SUPPORTS_MTUNE_PENTIUM4))
-    #target_compile_options(gaol PUBLIC -xP -mtune=pentium4)
-    add_compile_options(-xP)
-    add_compile_options(-mtune=pentium4)
+    target_compile_options(gaol PUBLIC -xP -mtune=pentium4)
     file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* Define this to 1 if SSE2 instructions are to be used */
 #define USING_SSE2_INSTRUCTIONS 1
@@ -339,8 +331,7 @@ if(GAOL_ENABLE_SIMD)
   endif()
   check_cxx_compiler_flag("-msse2" CXX_COMPILER_SUPPORTS_MSSE2)
   if(CXX_COMPILER_SUPPORTS_MSSE2)
-    #target_compile_options(gaol PUBLIC -msse2)
-    add_compile_options(-msse2)
+    target_compile_options(gaol PUBLIC -msse2)
     file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* Define this to 1 if SSE2 instructions are to be used */
 #define USING_SSE2_INSTRUCTIONS 1
@@ -348,8 +339,7 @@ if(GAOL_ENABLE_SIMD)
   endif()
   check_cxx_compiler_flag("-msse3" CXX_COMPILER_SUPPORTS_MSSE3)
   if(CXX_COMPILER_SUPPORTS_MSSE3)
-    #target_compile_options(gaol PUBLIC -msse3)
-    add_compile_options(-msse3)
+    target_compile_options(gaol PUBLIC -msse3)
     file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* Define this to 1 if SSE3 instructions are to be used */
 #define USING_SSE3_INSTRUCTIONS 1

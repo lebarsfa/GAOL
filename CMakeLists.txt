@@ -69,7 +69,7 @@ install(TARGETS gaol
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
     gaolConfigVersion.cmake
-    VERSION ${PACKAGE_VERSION}
+    #VERSION ${PACKAGE_VERSION}
     COMPATIBILITY AnyNewerVersion
     )
   

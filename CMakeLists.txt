@@ -36,7 +36,8 @@ else()
     mathlib
   #  URL https://github.com/lebarsfa/mathlib/archive/refs/heads/master.zip
   #  URL https://github.com/lebarsfa/mathlib/archive/refs/heads/prerelease.zip
-    URL https://github.com/lebarsfa/mathlib/archive/refs/heads/dev.zip
+  #  URL https://github.com/lebarsfa/mathlib/archive/refs/heads/dev.zip
+    URL https://github.com/lebarsfa/mathlib/archive/refs/heads/swim2025.zip
   #FetchContent_Declare(gaol SOURCE_DIR "P:/devel/GitHub/mathlib")
   #  URL ${CMAKE_SOURCE_DIR}/../mathlib
   #  URL ${CMAKE_SOURCE_DIR}/../mathlib-master.zip

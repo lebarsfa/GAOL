@@ -22,7 +22,7 @@
 
   FPU Handling when compiling with Microsoft Visual C++
 
-  \author Frédéric Goualard
+  \author FrÃ©dÃ©ric Goualard
   \date   2001-10-01
 */
 
@@ -36,6 +36,7 @@
 
 //  Mask 0x0a7f: 53 bits precision, all exceptions masked, rounding to +oo
 // FIXME: Using an hexadecimal constant is not portable!
+// To improve the portability while keeping performance, please replace all existing use of reset_fpu_cw(GAOL_FPU_MASK) with reset_fpu_cw_to_gaol_defaults()...
 #define GAOL_FPU_MASK 0x0a3f
 
 
@@ -103,12 +104,39 @@ round_nearest(void)
 
 INLINE unsigned short int get_fpu_cw()
 {
-  return _control87(0,0);
+  return _control87(0,0); // Warning: the control word might be larger than an unsigned short (e.g. with Visual Studio).
 }
 
 INLINE void reset_fpu_cw(unsigned short int st)
 {
-	_control87(st,_MCW_DN|_MCW_EM|_MCW_IC|_MCW_RC|_MCW_PC);
+	// Warning: the control word might be larger than an unsigned short (e.g. with Visual Studio).
+	// We strongly hope here that this will set the bits related to what was changed before...
+	// x87 precision is not controlled with this, but at the moment gaol only changes 
+	// the rounding mode when this function is used, so it should be OK...
+
+	_control87(st, _MCW_RC|_MCW_EM);
+	//_control87(st,_MCW_DN|_MCW_EM|_MCW_IC|_MCW_RC|_MCW_PC);
+}
+
+// 53 bits precision, all exceptions masked, rounding to +oo.
+INLINE void reset_fpu_cw_to_gaol_defaults()
+{
+	unsigned int newcw =
+		  PC_53            // 53-bit precision
+		| RC_UP            // round toward +infinity
+		| EM_INVALID       // mask invalid operation
+		| EM_DENORMAL      // mask denormal operand
+		| EM_ZERODIVIDE    // mask divide-by-zero
+		| EM_OVERFLOW      // mask overflow
+		| EM_UNDERFLOW     // mask underflow
+		| EM_INEXACT;      // mask inexact result
+
+	unsigned int mask =
+		  _MCW_PC          // precision field
+		| _MCW_RC          // rounding control field
+		| _MCW_EM;         // exception mask field
+
+	_control87(newcw, mask);
 }
 
   /*!

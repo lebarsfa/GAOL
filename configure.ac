@@ -265,6 +265,22 @@ if test ${using_sse2} = no; then
             [Define this to 1 if the compiler supports the "-ffloat-store" option])
     fi
 
+    # See https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
+    # Checking for availability of -fexcess-precision=standard
+    AC_LANG([C++])
+    OLD_CXXFLAGS=$CXXFLAGS
+    CXXFLAGS="-fexcess-precision=standard"
+    AC_MSG_CHECKING(whether the C++ compiler accepts -fexcess-precision=standard)
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]], [[]])],[has_fexcess_precision_standard_opt=yes],[has_fexcess_precision_standard_opt=no])
+    AC_MSG_RESULT(${has_fexcess_precision_standard_opt})
+    CXXFLAGS=${OLD_CXXFLAGS}
+    AC_LANG([C])
+    if test "${has_fexcess_precision_standard_opt}" = yes; then
+        CXXFLAGS="${CXXFLAGS} -fexcess-precision=standard"
+        AC_DEFINE(HAVE_FEXCESS_PRECISION_STANDARD_OPTION,1,
+            [Define this to 1 if the compiler supports the "-fexcess-precision=standard" option])
+    fi
+
 fi
 
 # --enable-debug

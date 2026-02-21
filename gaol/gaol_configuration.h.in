@@ -84,6 +84,9 @@
 /* Define this to 1 if the compiler supports the "-ffloat-store" option */
 #undef HAVE_FFLOAT_STORE_OPTION
 
+/* Define this to 1 if the compiler supports the "-fexcess-precision=standard" option */
+#undef HAVE_FEXCESS_PRECISION_STANDARD_OPTION
+
 /* Define this to 1 if the compiler supports the "-ffp-contract=off" option */
 #undef HAVE_FFP_CONTRACT_OFF_OPTION
 

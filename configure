@@ -18274,6 +18274,52 @@ printf "%s\n" "#define HAVE_FFLOAT_STORE_OPTION 1" >>confdefs.h
 
     fi
 
+    # See https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
+    # Checking for availability of -fexcess-precision=standard
+    ac_ext=cpp
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
+    OLD_CXXFLAGS=$CXXFLAGS
+    CXXFLAGS="-fexcess-precision=standard"
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether the C++ compiler accepts -fexcess-precision=standard" >&5
+printf %s "checking whether the C++ compiler accepts -fexcess-precision=standard... " >&6; }
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+int
+main (void)
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_compile "$LINENO"
+then :
+  has_fexcess_precision_standard_opt=yes
+else $as_nop
+  has_fexcess_precision_standard_opt=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: ${has_fexcess_precision_standard_opt}" >&5
+printf "%s\n" "${has_fexcess_precision_standard_opt}" >&6; }
+    CXXFLAGS=${OLD_CXXFLAGS}
+    ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+    if test "${has_fexcess_precision_standard_opt}" = yes; then
+        CXXFLAGS="${CXXFLAGS} -fexcess-precision=standard"
+
+printf "%s\n" "#define HAVE_FEXCESS_PRECISION_STANDARD_OPTION 1" >>confdefs.h
+
+    fi
+
 fi
 
 # --enable-debug

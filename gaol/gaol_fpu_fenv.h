@@ -131,20 +131,22 @@ INLINE double next_float(double d)
 	//! Sets rounding direction to -oo for SSE operations only
 	INLINE void round_downward_sse(void)
 	{
-		_mm_setcsr(GAOL_SSE_MASK|_MM_ROUND_DOWN);
+		//_mm_setcsr(GAOL_SSE_MASK|_MM_ROUND_DOWN);
+		_mm_setcsr(_MM_ROUND_MASK|_MM_ROUND_DOWN);
 	}
 
 	//! Sets rounding direction to the nearest for SSE operations only
 	INLINE void round_to_nearest_sse(void)
 	{
-		_mm_setcsr(GAOL_SSE_MASK|_MM_ROUND_NEAREST);
+		//_mm_setcsr(GAOL_SSE_MASK|_MM_ROUND_NEAREST);
+		_mm_setcsr(_MM_ROUND_MASK|_MM_ROUND_NEAREST);
 	}
-
 
 	//! Sets rounding direction to +oo for SSE operations only
 	INLINE void round_upward_sse(void)
 	{
-		_mm_setcsr(GAOL_SSE_MASK|_MM_ROUND_UP);
+		//_mm_setcsr(GAOL_SSE_MASK|_MM_ROUND_UP);
+		_mm_setcsr(_MM_ROUND_MASK|_MM_ROUND_UP);
 	}
 #endif // USING_SSE2_INSTRUCTIONS
 

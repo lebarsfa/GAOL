@@ -218,6 +218,7 @@ const interval interval::cst_minus_one_plus_one(-1.0,1.0);
     if (!(l <= r)) {
       os << "[empty]";
     } else {
+      //GAOL_RND_PRESERVE(); // This would be safer but the caller already called it in the current use cases...
       if (l == r) {
 				round_downward();
 				os << '<';
@@ -235,6 +236,7 @@ const interval interval::cst_minus_one_plus_one(-1.0,1.0);
 				os << r; //dtoa_upward(r,os);
 				os << ']';
       }
+      //GAOL_RND_RESTORE();
     }
   }
 
@@ -243,7 +245,8 @@ const interval interval::cst_minus_one_plus_one(-1.0,1.0);
   {
     //    double l = ((I.left()==0.0) ? 0.0  : I.left()); // Avoids printing -0
     //    double r = ((I.right()==0.0) ? 0.0 : I.right());  // Avoids printing -0
-    GAOL_RND_ENTER();
+    GAOL_RND_PRESERVE();
+    round_upward();
 
     double l = I.left(), r = I.right();
 
@@ -366,7 +369,7 @@ const interval interval::cst_minus_one_plus_one(-1.0,1.0);
 				}
       }
     }
-    GAOL_RND_LEAVE();
+    GAOL_RND_RESTORE();
     return os;
   }
 
@@ -828,7 +831,7 @@ interval nth_root(const interval& I, unsigned int n)
     if (J.set_contains(interval::minus_one_plus_one())) {
       return I;
     }
-    GAOL_RND_ENTER();
+    GAOL_RND_ENTER();//GAOL_RND_PRESERVE(); round_upward(); // This would be safest but in the rest of the function, rounding mode always starts and ends in upward whatever GAOL_PRESERVE_ROUNDING...
 
     double kl = 0.0, kr = 0.0; // Meaningless definitions to keep the compiler happy
     interval Jacos = acos(J);
@@ -881,7 +884,7 @@ interval nth_root(const interval& I, unsigned int n)
 	}
       }
     }
-    GAOL_RND_LEAVE();
+    GAOL_RND_LEAVE();//GAOL_RND_RESTORE();
     return interval(Ileft.left(),Iright.right());
   }
 
@@ -906,8 +909,8 @@ interval nth_root(const interval& I, unsigned int n)
     if (I.is_empty() || J.is_empty()) {
       return interval::emptyset();
     }
-    GAOL_RND_ENTER();
-    double kl, kr;
+    GAOL_RND_ENTER();//GAOL_RND_PRESERVE(); round_upward(); // This would be safest but in the rest of the function, rounding mode always starts and ends in upward whatever GAOL_PRESERVE_ROUNDING...
+    double kl = 0, kr = 0;
     interval atanJ = atan(J);
 
     interval Ileft;
@@ -960,7 +963,7 @@ interval nth_root(const interval& I, unsigned int n)
 	}
       }
     }
-    GAOL_RND_LEAVE();
+    GAOL_RND_LEAVE();//GAOL_RND_RESTORE();
     return interval(Ileft.left(),Iright.right());
   }
 
@@ -1143,12 +1146,15 @@ interval nth_root(const interval& I, unsigned int n)
       return std::numeric_limits<double>::max();
     }
 
-    unsigned short int _save_state=get_fpu_cw(); round_nearest();
+    //unsigned short int _save_state=get_fpu_cw(); round_nearest();
+    GAOL_RND_PRESERVE();
+    round_nearest();
     double middle = 0.5*(left()+right());
 	 if (std::isinf(middle)) {
 		middle = 0.5*left() + 0.5*right();
 	 }
-    GAOL_RND_LEAVE();
+    //GAOL_RND_LEAVE(); // Depending on GAOL_PRESERVE_ROUNDING, this might not restore the previous rounding mode if it was changed outside GAOL_RND_ENTER()...
+    GAOL_RND_RESTORE();
     return middle;
   }
 
@@ -1186,7 +1192,7 @@ interval nth_root(const interval& I, unsigned int n)
 
 	double l, r;
 
-    GAOL_RND_ENTER();
+    GAOL_RND_ENTER();//GAOL_RND_PRESERVE(); round_upward(); // This would be safest but in the rest of the function, rounding mode always starts and ends in upward whatever GAOL_PRESERVE_ROUNDING...
     if (Jpos.left() == 0.0) {
       l = 0.0;
       r = ::sqrt(Jpos.right());
@@ -1196,7 +1202,7 @@ interval nth_root(const interval& I, unsigned int n)
       round_upward();
 			r = ::sqrt(Jpos.right());
     }
-    GAOL_RND_LEAVE();
+    GAOL_RND_LEAVE();//GAOL_RND_RESTORE();
 
 	interval Res(l,r);
 

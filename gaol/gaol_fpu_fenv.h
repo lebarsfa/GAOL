@@ -78,20 +78,24 @@ extern int unsigned int _controlfp(unsigned int, unsigned int);
 //
 #if defined(__linux__) && (defined(__i386__) || defined(__x86_64__))
 #   define CTRLWORD(v) (v).__control_word
+#elif defined(__linux__) && defined(__arm__)
+#   define CTRLWORD(v) (v).__cw
 #elif defined(__linux__) && defined(__aarch64__)
 #   define CTRLWORD(v) (v).__fpcr
 #elif defined(__APPLE__) && (defined(__i386__) || defined(__x86_64__))
 #   define CTRLWORD(v) (v).__control
-#elif defined(__APPLE__) && (defined(__arm64__) || defined(__aarch64__))
-#   define CTRLWORD(v) (v).__fpcr
 #elif defined(__APPLE__) && defined(__arm__)
 #   define CTRLWORD(v) (v).__fpscr
+#elif defined(__APPLE__) && (defined(__arm64__) || defined(__aarch64__))
+#   define CTRLWORD(v) (v).__fpcr
 #elif defined(_MSC_VER) || defined(__BORLANDC__) //() && (defined(_M_IX86) || defined(_M_X64) || defined(_M_ARM) || defined(_M_ARM64) || defined(_M_ARM64EC))
 #   define CTRLWORD(v) (v)._Fe_ctl
 #elif defined(__MINGW64_VERSION_MAJOR) && (__MINGW64_VERSION_MAJOR >= 13)
 #   define CTRLWORD(v) (v)._Fe_ctl
-#elif defined(__MINGW32__) //()  && (defined(__i386__) || defined(_M_IX86) || defined(__x86_64__) || defined(_M_X64))
+#elif defined(__MINGW32__) && (defined(__i386__) || defined(_M_IX86) || defined(__x86_64__) || defined(_M_X64))
 #   define CTRLWORD(v) (v).__control_word
+#elif defined(__MINGW32__) && (defined(__arm__) || defined(_ARM_) || defined(__arm64__) || defined(__aarch64__) || defined(_ARM64_))
+#   define CTRLWORD(v) (v).__cw
 #elif defined(__arm__) || defined(_ARM_)
 #   define CTRLWORD(v) (v).__cw
 #elif defined(__arm64__) || defined(__aarch64__) || defined(_ARM64_)

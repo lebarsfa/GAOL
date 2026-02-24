@@ -23,6 +23,8 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 
 endif()
 
+option(GAOL_INSTALL "Generate the install target" ON)
+
 # FetchContent added in CMake 3.11, downloads during the configure step
 # FetchContent_MakeAvailable was added in CMake 3.14; simpler usage
 include(FetchContent)
@@ -58,7 +60,7 @@ add_subdirectory(gaol)
 
 add_library(gaol::gaol ALIAS gaol)
 
-if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+if (GAOL_INSTALL)
   # From https://gitlab.com/CLIUtils/modern-cmake/-/blob/b47192867e86e5f00f70ec860638a28473edc8bf/chapters/install/installing.md
   # and https://unclejimbo.github.io/2018/06/08/Modern-CMake-for-Library-Developers/
   install(TARGETS gaol
@@ -87,7 +89,9 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
                 "${CMAKE_CURRENT_BINARY_DIR}/gaolConfigVersion.cmake"
           DESTINATION share/cmake/gaol
           )
-else()
+
   export(TARGETS gaol NAMESPACE gaol::
          FILE gaolTargets.cmake)
+  set(CMAKE_EXPORT_PACKAGE_REGISTRY ON)
+  export(PACKAGE gaol)
 endif()

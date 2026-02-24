@@ -32,10 +32,10 @@ add_library(gaol ${SOURCE_LIST} ${HEADER_LIST} ${OTHER_LIST})
 target_include_directories(gaol 
 	PUBLIC
 		"$<INSTALL_INTERFACE:include>"
-		"$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>"
+		"$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
+		"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
 		"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>"
 		"$<BUILD_INTERFACE:${unistd_msvc_SOURCE_DIR}>"
-		"$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
 )
 
 target_link_libraries(gaol PUBLIC mathlib::ultim)
@@ -47,7 +47,7 @@ generate_export_header(
     BASE_NAME gaol
     EXPORT_FILE_NAME gaol_configuration.h # To check...
 )
-#file(READ ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h gaol_configuration_content) # To check...
+#file(READ ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h gaol_configuration_content) # To check...
 
 if(NOT BUILD_SHARED_LIBS)
   target_compile_definitions(gaol PUBLIC gaol_STATIC_DEFINE)
@@ -75,7 +75,7 @@ include(CheckCSourceRuns)
 
 option(GAOL_ENABLE_RELATIONS_CERTAINLY "Relation symbols should stand for \"certainly relations\"" ON)
 if(GAOL_ENABLE_RELATIONS_CERTAINLY)
-  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* Define this if relation symbols should stand for \"certainly relations\" */
 #define GAOL_CERTAINLY_RELATIONS 1
 ")
@@ -95,7 +95,7 @@ if(GAOL_ENABLE_DEBUG)
   if(CXX_COMPILER_SUPPORTS_PEDANTIC)
     target_compile_options(gaol PUBLIC -pedantic)
   endif()
-  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* define this if you want debugging facilities */
 #define GAOL_DEBUGGING 1
 ")
@@ -103,7 +103,7 @@ endif()
 
 option(GAOL_ENABLE_EXCEPTIONS "Raise exceptions to signal errors" ON)
 if(GAOL_ENABLE_EXCEPTIONS)
-  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* Define this to 1 to allow raising exceptions instead of simply aborting */
 #define GAOL_EXCEPTIONS_ENABLED 1
 ")
@@ -111,7 +111,7 @@ endif()
 
 option(GAOL_ENABLE_RELATIONS_POSSIBLY "Relation symbols should stand for \"possibly relations\"" OFF)
 if(GAOL_ENABLE_RELATIONS_POSSIBLY)
-  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* Define this if relation symbols should stand for \"possibly relations\" */
 #define GAOL_POSSIBLY_RELATIONS 1
 ")
@@ -119,7 +119,7 @@ endif()
 
 option(GAOL_ENABLE_PRESERVE_ROUNDING "Transparently manipulates the FPU control flags" ON)
 if(GAOL_ENABLE_PRESERVE_ROUNDING)
-  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* define this to 1 if rounding direction should be preserved */
 #define GAOL_PRESERVE_ROUNDING 1
 ")
@@ -127,7 +127,7 @@ endif()
 
 option(GAOL_ENABLE_RELATIONS_SET "Relation symbols should stand for \"set relations\"" OFF)
 if(GAOL_ENABLE_RELATIONS_SET)
-  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* Define this if relation symbols should stand for \"set relations\" */
 #define GAOL_SET_RELATIONS 1
 ")
@@ -135,7 +135,7 @@ endif()
 
 option(USE_GAOL_USING_APMATHLIB "IBM APMathlib library" ON)
 if(USE_GAOL_USING_APMATHLIB)
-  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* Define this to 1 if using the IBM APMathlib library */
 #define GAOL_USING_APMATHLIB 1
 ")
@@ -143,7 +143,7 @@ endif()
 
 option(GAOL_ENABLE_ASM "Allow ASM support" ON)
 if(GAOL_ENABLE_ASM)
-  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* define this to 1 if you want to allow ASM support */
 #define GAOL_USING_ASM 1
 ")
@@ -151,7 +151,7 @@ endif()
 
 option(USE_GAOL_USING_CRLIBM "CRLibm Mathematical library" OFF)
 if(USE_GAOL_USING_CRLIBM)
-  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* Define this to 1 if using the CRLibm Mathematical library */
 #define GAOL_USING_CRLIBM 1
 ")
@@ -159,7 +159,7 @@ endif()
 
 option(GAOL_ENABLE_VERBOSE_MODE "Use verbose mode" ON)
 if(GAOL_ENABLE_VERBOSE_MODE)
-  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* Define this to 1 to enable verbose mode */
 #define GAOL_VERBOSE_MODE 1
 ")
@@ -196,12 +196,12 @@ endif()
 #endif()
 
 if(HAVE_GETRUSAGE_IN_HEADER)
-  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* Define this to 1 if function getrusage() is declared in sys/resource.h */
 #define GETRUSAGE_IN_HEADER 1
 ")
 else()
-  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* Define this to 1 if function getrusage() is declared in sys/resource.h */
 #define GETRUSAGE_IN_HEADER 0
 ")
@@ -209,12 +209,12 @@ endif()
 
 # Determined in gaol_config.h...
 #if(HAVE_CLOCK_IN_HEADER)
-#  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+#  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 #/* Define this to 1 if function clock() is declared in time.h */
 ##define CLOCK_IN_HEADER 1
 #")
 #else()
-#  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+#  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 #/* Define this to 1 if function clock() is declared in time.h */
 ##define CLOCK_IN_HEADER 0
 #")
@@ -222,7 +222,7 @@ endif()
 
 check_include_files("cassert" HAVE_CASSERT_H)
 if(HAVE_CASSERT_H)
-  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 #/* Define to 1 if you have the <cassert> header file. */
 #define HAVE_CASSERT 1
 ")
@@ -230,7 +230,7 @@ endif()
 
 check_function_exists(finite HAVE_FINITE)
 if(HAVE_FINITE)
-  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 #/* Define to 1 if you have the `finite' function. */
 #define HAVE_FINITE 1
 ")
@@ -238,7 +238,7 @@ endif()
 
 check_function_exists(getrusage HAVE_GETRUSAGE)
 if(HAVE_GETRUSAGE)
-  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 #/* Define to 1 if you have the `getrusage' function. */
 #define HAVE_GETRUSAGE 1
 ")
@@ -267,7 +267,7 @@ if(GAOL_ENABLE_OPTIMIZE)
   check_cxx_compiler_flag("-fvisibility=hidden" CXX_COMPILER_SUPPORTS_FVISIBILITY_HIDDEN)
   if((CXX_COMPILER_SUPPORTS_FVISIBILITY_INLINES_HIDDEN) AND (CXX_COMPILER_SUPPORTS_FVISIBILITY_HIDDEN))
     target_compile_options(gaol PUBLIC -fvisibility-inlines-hidden -fvisibility=hidden)
-    file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 #/* Define this to 1 if the compiler supports the \"-fvisibility\" option */
 #define HAVE_VISIBILITY_OPTIONS 1
 ")
@@ -276,7 +276,7 @@ endif()
 
 check_type_size("int" SIZEOF_INT)
 if(SIZEOF_INT)
-  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* The size of `int', as computed by sizeof. */
 #define SIZEOF_INT ${SIZEOF_INT}
 ")
@@ -284,7 +284,7 @@ endif()
 
 check_type_size("long" SIZEOF_LONG)
 if(SIZEOF_LONG)
-  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* The size of `long', as computed by sizeof. */
 #define SIZEOF_LONG ${SIZEOF_LONG}
 ")
@@ -292,7 +292,7 @@ endif()
 
 check_type_size("long long int" SIZEOF_LONG_LONG_INT)
 if(SIZEOF_LONG_LONG_INT)
-  file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+  file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* The size of `long long int', as computed by sizeof. */
 #define SIZEOF_LONG_LONG_INT ${SIZEOF_LONG_LONG_INT}
 ")
@@ -312,7 +312,7 @@ if(GAOL_ENABLE_SIMD)
   check_cxx_compiler_flag("/arch:SSE2" CXX_COMPILER_SUPPORTS_ARCH_SSE2)
   if(CXX_COMPILER_SUPPORTS_ARCH_SSE2)
     target_compile_options(gaol PUBLIC /arch:SSE2)
-    file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* Define this to 1 if SSE2 instructions are to be used */
 #define USING_SSE2_INSTRUCTIONS 1
 ")
@@ -321,7 +321,7 @@ if(GAOL_ENABLE_SIMD)
   check_cxx_compiler_flag("-mtune=pentium4" CXX_COMPILER_SUPPORTS_MTUNE_PENTIUM4)
   if((CXX_COMPILER_SUPPORTS_XP) AND (CXX_COMPILER_SUPPORTS_MTUNE_PENTIUM4))
     target_compile_options(gaol PUBLIC -xP -mtune=pentium4)
-    file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* Define this to 1 if SSE2 instructions are to be used */
 #define USING_SSE2_INSTRUCTIONS 1
 ")
@@ -329,7 +329,7 @@ if(GAOL_ENABLE_SIMD)
   check_cxx_compiler_flag("-msse2" CXX_COMPILER_SUPPORTS_MSSE2)
   if(CXX_COMPILER_SUPPORTS_MSSE2)
     target_compile_options(gaol PUBLIC -msse2)
-    file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* Define this to 1 if SSE2 instructions are to be used */
 #define USING_SSE2_INSTRUCTIONS 1
 ")
@@ -337,23 +337,23 @@ if(GAOL_ENABLE_SIMD)
   check_cxx_compiler_flag("-msse3" CXX_COMPILER_SUPPORTS_MSSE3)
   if(CXX_COMPILER_SUPPORTS_MSSE3)
     target_compile_options(gaol PUBLIC -msse3)
-    file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+    file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 /* Define this to 1 if SSE3 instructions are to be used */
 #define USING_SSE3_INSTRUCTIONS 1
 ")
   endif()
 endif()
 
-file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "
+file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "
 
 ")
 
 #file(READ ${CMAKE_CURRENT_SOURCE_DIR}/gaol_config_mingw.h gaol_config_mingw_content)
 file(READ ${CMAKE_CURRENT_SOURCE_DIR}/gaol_version_mingw.h gaol_version_mingw_content)
-file(APPEND ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h "${gaol_version_mingw_content}") # To check...
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/gaol_double_op_apmathlib.h ${PROJECT_BINARY_DIR}/gaol/gaol_double_op.h COPYONLY) # To check...
+file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h "${gaol_version_mingw_content}") # To check...
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/gaol_double_op_apmathlib.h ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_double_op.h COPYONLY) # To check...
 
-if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+if (GAOL_INSTALL)
   install(FILES 
   ${CMAKE_CURRENT_SOURCE_DIR}/gaol
   ${CMAKE_CURRENT_SOURCE_DIR}/gaol.h
@@ -392,8 +392,8 @@ if (CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   ${CMAKE_CURRENT_SOURCE_DIR}/gaol_version_msvc.h # To check...
   ${CMAKE_CURRENT_SOURCE_DIR}/sysdeps/gaol_exact_c99.h
   ${CMAKE_CURRENT_SOURCE_DIR}/sysdeps/gaol_exact_msvc.h
-  ${PROJECT_BINARY_DIR}/gaol/gaol_double_op.h # To check...
-  ${PROJECT_BINARY_DIR}/gaol/gaol_configuration.h # To check...
+  ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_double_op.h # To check...
+  ${CMAKE_CURRENT_BINARY_DIR}/gaol/gaol_configuration.h # To check...
       DESTINATION include/gaol
   )
 endif()

@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.14...3.25)
 # Project name and a few useful settings. Other commands can pick up the results
 project(
   gaol
-  VERSION 4.2.3
+  VERSION 4.2.3.20260215
   DESCRIPTION "Not Just Another Interval Library"
   LANGUAGES C CXX)
 
@@ -29,7 +29,7 @@ option(GAOL_INSTALL "Generate the install target" ON)
 # FetchContent_MakeAvailable was added in CMake 3.14; simpler usage
 include(FetchContent)
 
-find_package(mathlib QUIET)
+find_package(mathlib 2.1.2.20260215 QUIET)
 if(mathlib_FOUND)
   message(STATUS "Found mathlib version ${mathlib_VERSION} in ${mathlib_DIR}")
 else()

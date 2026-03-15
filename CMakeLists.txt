@@ -41,8 +41,8 @@ else()
   #  FIND_PACKAGE_ARGS
   )
   FetchContent_MakeAvailable(mathlib)
-  # Adds mathlib::ultim
 endif()
+# Adds mathlib::ultim
 
 if(MSVC)
   FetchContent_Declare(

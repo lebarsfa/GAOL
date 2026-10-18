@@ -36,7 +36,7 @@ else()
   message(STATUS "Attempt to get mathlib automatically...")
   FetchContent_Declare(
     mathlib
-    URL https://github.com/lebarsfa/mathlib/archive/refs/heads/master.zip
+    URL https://github.com/codac-team/mathlib/archive/refs/heads/master.zip
   #  URL ${CMAKE_SOURCE_DIR}/../mathlib-master.zip
   #  FIND_PACKAGE_ARGS
   )
